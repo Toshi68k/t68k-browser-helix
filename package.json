@@ -1,0 +1,16 @@
+{
+  "name": "t68k-browser-helix",
+  "version": "1.0.0",
+  "description": "Modal, selection-first, which-key powered browser navigation inspired by Helix Editor",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/generate-icons.js && node scripts/build.js",
+    "icons": "node scripts/generate-icons.js",
+    "validate": "node --check src/background/service-worker.js && node scripts/build.js && node --check dist/content.js",
+    "firefox": "npx web-ext run",
+    "lint:firefox": "npx web-ext lint"
+  },
+  "keywords": ["helix", "chrome-extension", "modal-editing", "vimium", "kakoune", "which-key"],
+  "author": "",
+  "license": "MIT"
+}

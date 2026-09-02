@@ -1,0 +1,358 @@
+/**
+ * T68k Browser Helix - Options UI Styling
+ */
+
+:root {
+  --bg-primary: #141423;
+  --bg-secondary: #1e1e2e;
+  --bg-elevated: #28283d;
+  --border: #3b3b58;
+  --text-main: #dcd7ba;
+  --text-muted: #7e7e9a;
+  --accent: #b4befe;
+  --accent-glow: rgba(180, 190, 254, 0.2);
+  --green: #a6e3a1;
+  --blue: #89b4fa;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "JetBrains Mono", "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+}
+
+.hx-settings-app {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.hx-sidebar {
+  width: 260px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  flex-shrink: 0;
+}
+
+.hx-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding: 0 8px;
+}
+
+.hx-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.hx-brand h2 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+.hx-brand span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.hx-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.hx-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.hx-nav-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-main);
+}
+
+.hx-nav-btn.active {
+  background: var(--bg-elevated);
+  color: var(--accent);
+  border-color: var(--border);
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.hx-sidebar-footer {
+  padding: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Main Content */
+.hx-main-content {
+  flex: 1;
+  padding: 32px 48px;
+  max-width: 900px;
+  overflow-y: auto;
+}
+
+.hx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hx-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.hx-save-status {
+  font-size: 12px;
+  color: var(--green);
+  background: rgba(166, 227, 161, 0.1);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(166, 227, 161, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hx-save-status.visible {
+  opacity: 1;
+}
+
+/* Cards & Panels */
+.hx-panel {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hx-panel.active {
+  display: flex;
+}
+
+.hx-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.hx-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Form Fields */
+.hx-field {
+  margin-bottom: 18px;
+}
+
+.hx-field:last-child {
+  margin-bottom: 0;
+}
+
+.hx-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.hx-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.hx-desc code {
+  background: var(--bg-elevated);
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+.hx-input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hx-val {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 48px;
+}
+
+input[type="range"] {
+  flex: 1;
+  max-width: 280px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.hx-text-input {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.hx-text-input:focus {
+  border-color: var(--accent);
+}
+
+.hx-textarea {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+}
+
+.hx-textarea:focus {
+  border-color: var(--accent);
+}
+
+.hx-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+}
+
+.hx-checkbox-label input {
+  accent-color: var(--accent);
+}
+
+/* Theme Grid */
+.hx-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.hx-theme-option {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.15s ease;
+}
+
+.hx-theme-option:hover {
+  border-color: var(--accent);
+}
+
+.hx-theme-option.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.hx-theme-preview {
+  height: 50px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hx-theme-preview span {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Keymap Table */
+.hx-keymap-table {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td code {
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 11.5px;
+}

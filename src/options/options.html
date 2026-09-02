@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T68k Browser Helix - Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+
+<body class="theme-helix_dark">
+  <div class="hx-settings-app">
+    <!-- Sidebar -->
+    <aside class="hx-sidebar">
+      <div class="hx-brand">
+        <img src="../assets/icon48.png" alt="T68k Browser Helix" class="hx-logo" />
+        <div>
+          <h2>T68K HELIX</h2>
+          <span>Browser Navigation</span>
+        </div>
+      </div>
+      <nav class="hx-nav">
+        <button class="hx-nav-btn active" data-tab="general">
+          <span class="hx-icon">⚙️</span> General
+        </button>
+        <button class="hx-nav-btn" data-tab="appearance">
+          <span class="hx-icon">🎨</span> Themes & Style
+        </button>
+        <button class="hx-nav-btn" data-tab="keymap">
+          <span class="hx-icon">⌨️</span> Keybindings
+        </button>
+        <button class="hx-nav-btn" data-tab="blacklist">
+          <span class="hx-icon">🚫</span> Excluded Sites
+        </button>
+      </nav>
+      <div class="hx-sidebar-footer">
+        <span class="hx-version">v1.0.0</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="hx-main-content">
+      <header class="hx-header">
+        <h1 id="tab-title">General Settings</h1>
+        <div class="hx-save-status" id="save-status">Saved</div>
+      </header>
+
+      <div class="hx-panel-container">
+        <!-- GENERAL TAB -->
+        <section class="hx-panel active" id="panel-general">
+          <div class="hx-card">
+            <h3>Scrolling & Navigation</h3>
+            <div class="hx-field">
+              <label for="scrollStep">Scroll Step (px)</label>
+              <div class="hx-input-group">
+                <input type="range" id="scrollStep" min="20" max="200" step="5" value="80" />
+                <span class="hx-val" id="scrollStepVal">80px</span>
+              </div>
+              <p class="hx-desc">Distance scrolled per <code>j</code> / <code>k</code> keypress.</p>
+            </div>
+
+            <div class="hx-field">
+              <label for="scrollHalfRatio">Half-Page Scroll Ratio</label>
+              <div class="hx-input-group">
+                <input type="range" id="scrollHalfRatio" min="0.2" max="0.9" step="0.05" value="0.5" />
+                <span class="hx-val" id="scrollHalfRatioVal">50%</span>
+              </div>
+              <p class="hx-desc">Viewport percentage scrolled with <code>d</code> / <code>u</code>.</p>
+            </div>
+
+            <div class="hx-field">
+              <label class="hx-checkbox-label">
+                <input type="checkbox" id="smoothScroll" checked />
+                <span>Smooth scrolling animations</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="hx-card">
+            <h3>Link Hinting</h3>
+            <div class="hx-field">
+              <label for="hintCharacters">Hint Character Set</label>
+              <input type="text" id="hintCharacters" class="hx-text-input" value="fjdkslaeiruvncmghwoqptyzb" />
+              <p class="hx-desc">Characters used to generate link hint badges (in order of home-row priority).</p>
+            </div>
+
+            <div class="hx-field">
+              <label for="escapeSequence">Insert Mode Fast Escape</label>
+              <input type="text" id="escapeSequence" class="hx-text-input" value="jk" maxlength="3"
+                style="max-width: 100px;" />
+              <p class="hx-desc">Quick 2-letter chord (e.g. <code>jk</code> or <code>fd</code>) to exit text inputs back
+                to Normal mode.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- APPEARANCE TAB -->
+        <section class="hx-panel" id="panel-appearance">
+          <div class="hx-card">
+            <h3>Helix Color Theme</h3>
+            <div class="hx-theme-grid">
+              <div class="hx-theme-option selected" data-theme="helix_dark">
+                <div class="hx-theme-preview" style="background: #141423; border: 2px solid #b4befe;">
+                  <span style="background: #89b4fa; color:#111;">NOR</span>
+                  <span style="background: #f9e2af; color:#111;">F</span>
+                </div>
+                <strong>Helix Dark</strong>
+              </div>
+
+              <div class="hx-theme-option" data-theme="catppuccin_mocha">
+                <div class="hx-theme-preview" style="background: #1e1e2e; border: 2px solid #cba6f7;">
+                  <span style="background: #89b4fa; color:#111;">NOR</span>
+                  <span style="background: #f5c2e7; color:#111;">F</span>
+                </div>
+                <strong>Catppuccin Mocha</strong>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- KEYMAP TAB -->
+        <section class="hx-panel" id="panel-keymap">
+          <div class="hx-card">
+            <h3>T68k Browser Helix Keybinding Cheat Sheet</h3>
+            <div class="hx-keymap-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>Mode</th>
+                    <th>Action Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>j</code> / <code>k</code></td>
+                    <td>Normal</td>
+                    <td>Scroll down / up (supports counts like <code>5j</code>)</td>
+                  </tr>
+                  <tr>
+                    <td><code>h</code> / <code>l</code></td>
+                    <td>Normal</td>
+                    <td>Scroll left / right</td>
+                  </tr>
+                  <tr>
+                    <td><code>d</code> / <code>u</code></td>
+                    <td>Normal</td>
+                    <td>Half-page scroll down / up</td>
+                  </tr>
+                  <tr>
+                    <td><code>f</code></td>
+                    <td>Normal</td>
+                    <td>Open link hint mode in current tab</td>
+                  </tr>
+                  <tr>
+                    <td><code>F</code></td>
+                    <td>Normal</td>
+                    <td>Open link hint mode in background tab</td>
+                  </tr>
+                  <tr>
+                    <td><code>v</code></td>
+                    <td>Normal</td>
+                    <td>Enter Visual / Selection mode for text carets</td>
+                  </tr>
+                  <tr>
+                    <td><code>/</code> / <code>?</code></td>
+                    <td>Normal</td>
+                    <td>In-page search forward / backward</td>
+                  </tr>
+                  <tr>
+                    <td><code>n</code> / <code>N</code></td>
+                    <td>Normal</td>
+                    <td>Jump to next / previous search match</td>
+                  </tr>
+                  <tr>
+                    <td><code>:</code></td>
+                    <td>Normal</td>
+                    <td>Helix command prompt (<code>:tabnew</code>, <code>:b</code>, <code>:theme</code>,
+                      <code>:q</code>)</td>
+                  </tr>
+                  <tr>
+                    <td><code>&lt;Space&gt;</code></td>
+                    <td>Normal</td>
+                    <td>Open Space Menu (Tab picker, Bookmarks, History, Yank)</td>
+                  </tr>
+                  <tr>
+                    <td><code>&lt;Space&gt; b</code></td>
+                    <td>Normal</td>
+                    <td>Fuzzy tab/buffer switcher</td>
+                  </tr>
+                  <tr>
+                    <td><code>g g</code> / <code>g e</code></td>
+                    <td>Normal</td>
+                    <td>Jump to top / bottom of webpage</td>
+                  </tr>
+                  <tr>
+                    <td><code>g h</code> / <code>g l</code></td>
+                    <td>Normal</td>
+                    <td>Go back / forward in browser history</td>
+                  </tr>
+                  <tr>
+                    <td><code>] h</code> / <code>[ h</code></td>
+                    <td>Normal</td>
+                    <td>Jump to next / previous heading</td>
+                  </tr>
+                  <tr>
+                    <td><code>] l</code> / <code>[ l</code></td>
+                    <td>Normal</td>
+                    <td>Jump to next / previous link</td>
+                  </tr>
+                  <tr>
+                    <td><code>] i</code> / <code>[ i</code></td>
+                    <td>Normal</td>
+                    <td>Jump to next / previous input field</td>
+                  </tr>
+                  <tr>
+                    <td><code>] b</code> / <code>[ b</code></td>
+                    <td>Normal</td>
+                    <td>Jump to next / previous button</td>
+                  </tr>
+                  <tr>
+                    <td><code>y y</code></td>
+                    <td>Normal</td>
+                    <td>Yank page URL to clipboard</td>
+                  </tr>
+                  <tr>
+                    <td><code>y f</code></td>
+                    <td>Normal</td>
+                    <td>Yank target link URL via hints</td>
+                  </tr>
+                  <tr>
+                    <td><code>w</code> / <code>b</code> / <code>e</code></td>
+                    <td>Select</td>
+                    <td>Extend visual selection by word</td>
+                  </tr>
+                  <tr>
+                    <td><code>x</code></td>
+                    <td>Select</td>
+                    <td>Extend visual selection to whole line / block</td>
+                  </tr>
+                  <tr>
+                    <td><code>y</code></td>
+                    <td>Select</td>
+                    <td>Yank selected text and return to Normal mode</td>
+                  </tr>
+                  <tr>
+                    <td><code>Esc</code> / <code>jk</code></td>
+                    <td>Insert</td>
+                    <td>Exit text input back to Normal mode</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLACKLIST TAB -->
+        <section class="hx-panel" id="panel-blacklist">
+          <div class="hx-card">
+            <h3>Excluded URL Patterns</h3>
+            <p class="hx-desc">URLs matching these wildcard patterns will disable Helix navigation so web app shortcuts
+              take precedence.</p>
+            <div class="hx-blacklist-editor">
+              <textarea id="blacklist" class="hx-textarea" rows="8"
+                placeholder="https://docs.google.com/*&#10;https://drive.google.com/*"></textarea>
+            </div>
+            <p class="hx-desc">One pattern per line. Use <code>*</code> as a wildcard.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+
+</html>
