@@ -1,0 +1,86 @@
+name: Build and Release Extension
+
+on:
+  release:
+    types: [ published ]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name (e.g. v0.1.0)'
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Package Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Validate build
+        run: npm run validate
+
+      - name: Determine Version
+        id: version
+        run: |
+          RAW_TAG="${{ inputs.tag_name || github.ref_name }}"
+          # Strip leading 'v' if present (e.g. 'v0.2.0' -> '0.2.0')
+          VERSION="${RAW_TAG#v}"
+          if [ -z "$VERSION" ] || [ "${{ github.ref_type }}" = "branch" -a -z "${{ inputs.tag_name }}" ]; then
+            VERSION="0.1.0"
+          fi
+          echo "Determined extension version: $VERSION"
+          echo "EXTENSION_VERSION=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Determine artifact name
+        id: vars
+        run: |
+          TAG="${{ steps.version.outputs.EXTENSION_VERSION }}"
+          ZIP_NAME="t68k-browser-helix-${TAG}.zip"
+          # Sanitize artifact name to prevent invalid characters in Actions UI
+          ARTIFACT_NAME=$(echo "t68k-browser-helix-${TAG}" | tr '/\\' '--')
+          echo "Extension artifact name: $ARTIFACT_NAME"
+          echo "Extension package: $ZIP_NAME"
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> "$GITHUB_ENV"
+          echo "ZIP_NAME=$ZIP_NAME" >> "$GITHUB_ENV"
+
+      - name: Package extension ZIP
+        run: |
+          zip -r "$ZIP_NAME" manifest.json dist/ src/ README.md
+          echo "Generated bundle details:"
+          ls -lh "$ZIP_NAME"
+
+      - name: Upload extension to Workflow Run
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ZIP_NAME }}
+          if-no-files-found: error
+
+      - name: Upload extension to GitHub Release
+        uses: softprops/action-gh-release@v3
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'release' || (inputs.tag_name != null && inputs.tag_name != '')
+        with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
+          files: ${{ env.ZIP_NAME }}
+          generate_release_notes: true
