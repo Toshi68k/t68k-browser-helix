@@ -34,23 +34,33 @@ jobs:
         with:
           node-version: 26
 
+      - name: Determine Version
+        id: version
+        run: |
+          if [ -n "${{ inputs.tag_name }}" ]; then
+            RAW_TAG="${{ inputs.tag_name }}"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            RAW_TAG="${{ github.ref_name }}"
+          else
+            RAW_TAG=""
+          fi
+
+          # Strip leading 'v' if present (e.g. 'v0.2.0' -> '0.2.0')
+          VERSION="${RAW_TAG#v}"
+          if [ -z "$VERSION" ]; then
+            VERSION=$(node -p "require('./package.json').version")
+          else
+            npm version "$VERSION" --no-git-tag-version --allow-same-version
+          fi
+
+          echo "Determined extension version: $VERSION"
+          echo "EXTENSION_VERSION=${VERSION}" >> $GITHUB_OUTPUT
+
       - name: Build extension
         run: npm run build
 
       - name: Validate build
         run: npm run validate
-
-      - name: Determine Version
-        id: version
-        run: |
-          RAW_TAG="${{ inputs.tag_name || github.ref_name }}"
-          # Strip leading 'v' if present (e.g. 'v0.2.0' -> '0.2.0')
-          VERSION="${RAW_TAG#v}"
-          if [ -z "$VERSION" ] || [ "${{ github.ref_type }}" = "branch" -a -z "${{ inputs.tag_name }}" ]; then
-            VERSION="0.1.0"
-          fi
-          echo "Determined extension version: $VERSION"
-          echo "EXTENSION_VERSION=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Determine artifact name
         id: vars

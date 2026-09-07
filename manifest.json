@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "T68k Browser Helix",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Modal, selection-first, which-key powered browser navigation inspired by Helix Editor",
   "permissions": [
     "storage",

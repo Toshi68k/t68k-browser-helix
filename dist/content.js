@@ -1,6 +1,6 @@
 /**
  * T68k Browser Helix - Bundled Standalone Content Script
- * Generated: 2026-09-07T13:39:03.426Z
+ * Generated: 2026-09-07T14:01:52.127Z
  */
 (function() {
 'use strict';

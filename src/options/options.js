@@ -15,9 +15,22 @@ let currentSettings = {
 let saveTimeout = null;
 
 async function initOptions() {
+  updateVersionDisplay();
   setupTabs();
   await loadSettings();
   setupEventListeners();
+}
+
+function updateVersionDisplay() {
+  try {
+    const versionEl = document.querySelector('.hx-version');
+    const manifest = chrome?.runtime?.getManifest ? chrome.runtime.getManifest() : null;
+    if (versionEl && manifest?.version) {
+      versionEl.textContent = `v${manifest.version}`;
+    }
+  } catch {
+    // Ignore if running outside extension context
+  }
 }
 
 function setupTabs() {
