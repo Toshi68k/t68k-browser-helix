@@ -34,31 +34,42 @@ export class StatusLine {
     const modeText = this.currentModeLabel || 'NOR';
 
     this.element.innerHTML = `
-      <div class="hx-status-left">
-        <span class="hx-mode-badge mode-${modeClass}">${modeText}</span>
-        <span class="hx-status-message"></span>
-      </div>
-      <div class="hx-status-right">
-        <span class="hx-status-keys" style="display: none;"></span>
-        <span class="hx-status-scroll">Top</span>
-        <span class="hx-status-title"></span>
-      </div>
+      <span class="hx-mode-badge mode-${modeClass}">${modeText}</span>
+      <span class="hx-status-keys" style="display: none;"></span>
+      <span class="hx-status-message" style="display: none;"></span>
+      <span class="hx-status-scroll">Top</span>
     `;
 
     this.modeEl = this.element.querySelector('.hx-mode-badge');
     this.messageEl = this.element.querySelector('.hx-status-message');
     this.keysEl = this.element.querySelector('.hx-status-keys');
     this.scrollEl = this.element.querySelector('.hx-status-scroll');
-    this.titleEl = this.element.querySelector('.hx-status-title');
+    this.titleEl = null;
 
     this.setMode(this.currentModeCode, this.currentModeLabel);
-    this.updateTitle();
     this.updateScroll();
 
     container.appendChild(this.element);
 
     // Update scroll percentage on scroll
     window.addEventListener('scroll', () => this.updateScroll(), { passive: true });
+
+    // Proximity fade when mouse cursor gets near the HUD pill
+    window.addEventListener('mousemove', (e) => {
+      if (!this.element) return;
+      const rect = this.element.getBoundingClientRect();
+      const pad = 24;
+      if (
+        e.clientX >= rect.left - pad &&
+        e.clientX <= rect.right + pad &&
+        e.clientY >= rect.top - pad &&
+        e.clientY <= rect.bottom + pad
+      ) {
+        this.element.classList.add('hx-hud-dimmed');
+      } else {
+        this.element.classList.remove('hx-hud-dimmed');
+      }
+    }, { passive: true });
   }
 
   setMode(modeCode, modeLabel) {
@@ -72,10 +83,14 @@ export class StatusLine {
   setMessage(text, durationMs = 3000) {
     if (!this.messageEl) return;
     this.messageEl.textContent = text;
+    this.messageEl.style.display = text ? 'inline-block' : 'none';
     if (this.messageTimeout) clearTimeout(this.messageTimeout);
     if (durationMs > 0) {
       this.messageTimeout = setTimeout(() => {
-        if (this.messageEl) this.messageEl.textContent = '';
+        if (this.messageEl) {
+          this.messageEl.textContent = '';
+          this.messageEl.style.display = 'none';
+        }
       }, durationMs);
     }
   }
