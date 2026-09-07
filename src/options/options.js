@@ -25,8 +25,9 @@ function updateVersionDisplay() {
   try {
     const versionEl = document.querySelector('.hx-version');
     const manifest = chrome?.runtime?.getManifest ? chrome.runtime.getManifest() : null;
-    if (versionEl && manifest?.version) {
-      versionEl.textContent = `v${manifest.version}`;
+    const displayVersion = manifest?.version_name || manifest?.version;
+    if (versionEl && displayVersion) {
+      versionEl.textContent = `v${displayVersion}`;
     }
   } catch {
     // Ignore if running outside extension context
