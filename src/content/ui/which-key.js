@@ -28,14 +28,21 @@ export const MENUS = {
   goto: {
     title: 'GOTO (g)',
     items: [
+      { key: 'w', label: 'Jump / Link hint' },
+      { key: 'W', label: 'Jump in new tab' },
       { key: 'g', label: 'Top of page' },
       { key: 'e', label: 'Bottom of page' },
+      { key: 't', label: 'Window top' },
+      { key: 'c', label: 'Window center' },
+      { key: 'b', label: 'Window bottom' },
+      { key: 'n', label: 'Next tab / buffer' },
+      { key: 'p', label: 'Previous tab / buffer' },
       { key: 'a', label: 'Alternate / Prev tab' },
+      { key: 'h', label: 'Line start / far left' },
+      { key: 'l', label: 'Line end / far right' },
+      { key: '<', label: 'History back' },
+      { key: '>', label: 'History forward' },
       { key: 'i', label: 'First input field' },
-      { key: 'h', label: 'History back' },
-      { key: 'l', label: 'History forward' },
-      { key: 't', label: 'Next tab' },
-      { key: 'p', label: 'Previous tab' },
       { key: 'u', label: 'Go up URL hierarchy' },
       { key: 's', label: 'View page source' },
       { key: 'r', label: 'Reload page' },
@@ -83,10 +90,12 @@ export const MENUS = {
   zoom: {
     title: 'VIEW / ZOOM (z)',
     items: [
+      { key: 'z', label: 'Center view (zz)' },
+      { key: 't', label: 'Align top (zt)' },
+      { key: 'b', label: 'Align bottom (zb)' },
       { key: 'i', label: 'Zoom in' },
       { key: 'o', label: 'Zoom out' },
-      { key: '0', label: 'Zoom reset' },
-      { key: 'z', label: 'Center scroll' }
+      { key: '0', label: 'Zoom reset' }
     ]
   }
 };

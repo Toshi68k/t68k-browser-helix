@@ -23,7 +23,7 @@
   - `yl` — Yank `[Page Title](URL)` Markdown link.
 - **CLI Search Bangs in (`:open`)**: Fast search queries using `!gh`, `!so`, `!yt`, `!w`, `!npm`, `!crates`, `!mdn`, `!ddg`.
 - **Zen / Reader Mode (`:zen` / `<Space> z`)**: Distraction-free terminal/Helix-styled reading view.
-- **Link & Element Hinting (`f`, `F`, `yf`)**: Optimal 1-2 character keyboard markers over links, buttons, inputs, and clickable elements.
+- **Link & Element Hinting (`gw`, `gW`, `yf`)**: Optimal 1-2 character keyboard markers over links, buttons, inputs, and clickable elements.
 - **Fuzzy Tab & Buffer Switcher (`<Space> b`)**: Helix-like buffer picker for instant tab switching with fuzzy search.
 - **In-Page Interactive Search (`/`, `?`, `n`, `N`)**: Live match counts and smooth cycling.
 - **Helix Command Prompt (`:`)**: Interactive command palette with autocompletion (`:open`, `:tabnew`, `:b`, `:pin`, `:mute`, `:only`, `:split`, `:zen`, `:curl`, `:theme`, `:reload`, `:close`, `:settings`).
@@ -68,10 +68,13 @@
 | `j` / `k` | Scroll down / up (supports counts like `5j`, `10k`) |
 | `h` / `l` | Scroll left / right |
 | `d` / `u` | Half-page scroll down / up (`Ctrl-d` / `Ctrl-u`) |
-| `f` | Hint mode: click target element in current tab |
-| `F` | Hint mode: open target link in background tab |
+| `g w` | Hint mode: click target element in current tab (Helix jump mode) |
+| `g W` | Hint mode: open target link in background tab |
 | `v` | Toggle Visual / Selection mode |
 | `x` | Select current DOM line / paragraph block |
+| `%` | Select entire webpage document (`select_all`) |
+| `*` | Search forward for currently selected text (`search_selection`) |
+| `;` | Collapse / clear active text selection |
 | `/` / `?` | Search page forward / backward |
 | `n` / `N` | Jump to next / previous search match |
 | `:` | Open Command Prompt |
@@ -83,12 +86,14 @@
 | `<Space> p` | Toggle Tab Pin |
 | `<Space> m` | Toggle Tab Mute |
 | `<Space> s` | Split window into side-by-side tile |
-| `g g` / `g e` | Jump to top / bottom of page |
+| `g g` / `g e` | Jump to top / bottom of page (`goto_file_start` / `goto_last_line`) |
+| `g t` / `g c` / `g b` | Jump to window top / center / bottom (`goto_window_top/center/bottom`) |
+| `g h` / `g l` | Scroll to line start / end (`goto_line_start` / `goto_line_end`) |
+| `g <` / `g >` | Browser history back / forward (`gH` / `gL`) |
+| `g n` / `g p` | Next / previous tab / buffer (`goto_next_buffer` / `goto_previous_buffer`) |
 | `g a` | Jump to Alternate / previous active tab |
 | `g i` | Jump to first text input / search field in Insert mode |
 | `g s` | View page source (`view-source:`) |
-| `g h` / `g l` | History back / forward (`H` / `L`) |
-| `g t` / `g p` | Next / previous tab (`J` / `K`) |
 | `g u` | Go up URL directory hierarchy |
 | `r` / `R` | Reload page / Hard reload page |
 | `y y` / `y p` | Yank current URL / page title to clipboard |
@@ -103,8 +108,9 @@
 | `]h` / `[h` | Jump to next / previous heading (`h1-h6`) |
 | `]l` / `[l` | Jump to next / previous link |
 | `]i` / `[i` | Jump to next / previous form input field |
-| `]b` / `[b` | Jump to next / previous button |
+| `]b` / `[b` | Jump to next / previous tab/buffer |
 | `]p` / `[p` | Jump to next / previous paragraph |
+| `z z` / `z t` / `z b` | Align view: center / top / bottom |
 | `z i` / `z o` / `z 0` | Zoom in / Zoom out / Zoom reset |
 
 ### Visual / Selection Mode (`SEL`)
