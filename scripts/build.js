@@ -19,10 +19,32 @@ if (fs.existsSync(pkgPath) && fs.existsSync(manifestPath)) {
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
 
-  if (pkg.version && manifest.version !== pkg.version) {
-    manifest.version = pkg.version;
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf-8');
-    console.log(`Synced manifest.json version to ${pkg.version}`);
+  if (pkg.version) {
+    // Chrome manifest 'version' only supports 1-4 dot-separated integers (e.g. '1.0.0').
+    // Strip pre-release suffixes (e.g. '-beta.1', '-rc.2') for manifest.version,
+    // and use the full string for manifest.version_name if present.
+    const cleanVersion = (pkg.version || '').split('-')[0].replace(/[^0-9.]/g, '');
+    let changed = false;
+
+    if (manifest.version !== cleanVersion) {
+      manifest.version = cleanVersion;
+      changed = true;
+    }
+
+    if (pkg.version !== cleanVersion) {
+      if (manifest.version_name !== pkg.version) {
+        manifest.version_name = pkg.version;
+        changed = true;
+      }
+    } else if (manifest.version_name) {
+      delete manifest.version_name;
+      changed = true;
+    }
+
+    if (changed) {
+      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf-8');
+      console.log(`Synced manifest.json version to ${cleanVersion}${manifest.version_name ? ` (version_name: ${manifest.version_name})` : ''}`);
+    }
   }
 }
 
