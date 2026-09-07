@@ -26,7 +26,7 @@ export const MODES = {
   ZOOM_MENU: 'ZOOM_MENU'
 };
 
-const MODE_LABELS = {
+export const MODE_LABELS = {
   NORMAL: 'NOR',
   INSERT: 'INS',
   HINT: 'HNT',
@@ -57,6 +57,10 @@ export class StateManager {
 
   getMode() {
     return this.currentMode;
+  }
+
+  getModeLabel() {
+    return MODE_LABELS[this.currentMode] || this.currentMode;
   }
 
   isNormal() {
@@ -192,3 +196,38 @@ export class StateManager {
 }
 
 export const stateManager = new StateManager();
+
+export function getDeepActiveElement(root = document) {
+  let el = root.activeElement;
+  while (el && el.shadowRoot && el.shadowRoot.activeElement) {
+    el = el.shadowRoot.activeElement;
+  }
+  return el;
+}
+
+export function isEditableElement(el) {
+  if (!el) return false;
+  // Ignore any element inside the Helix Shadow DOM
+  const root = typeof el.getRootNode === 'function' ? el.getRootNode() : null;
+  if (root && root instanceof ShadowRoot) {
+    if (root.host && (root.host.id === 'helix-chrome-root' || root.host.closest?.('#helix-chrome-root'))) {
+      return false;
+    }
+  }
+  if (el.closest && el.closest('#helix-chrome-root')) return false;
+
+  const tag = el.tagName ? el.tagName.toLowerCase() : '';
+  if (tag === 'input') {
+    const nonTextTypes = ['button', 'submit', 'checkbox', 'radio', 'file', 'hidden', 'image', 'reset'];
+    return !nonTextTypes.includes(el.type);
+  }
+  if (tag === 'textarea') return true;
+  if (el.isContentEditable) return true;
+
+  const role = el.getAttribute?.('role');
+  if (role && ['textbox', 'searchbox', 'combobox'].includes(role)) {
+    return true;
+  }
+
+  return false;
+}

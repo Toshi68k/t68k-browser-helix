@@ -4,7 +4,7 @@
 
 import { initShadowRoot, setTheme } from './ui/shadow-root.js';
 import { statusLine } from './ui/statusline.js';
-import { stateManager, MODES } from './state.js';
+import { stateManager, MODES, isEditableElement, getDeepActiveElement } from './state.js';
 import { keyDispatcher } from './keymap/helix-keys.js';
 import { hintManager } from './ui/hints.js';
 import { scroller } from './navigation/scroller.js';
@@ -60,8 +60,11 @@ async function initHelix() {
   // Initialize isolated Shadow DOM
   await initShadowRoot(settings.theme || 'helix_dark');
 
+  // Sync mode with current focus before/during mounting status line
+  syncModeWithFocus();
+
   // Mount Helix Status Line
-  statusLine.mount();
+  statusLine.mount(stateManager.getMode(), stateManager.getModeLabel());
 
   // Listen to Storage updates (e.g. options page changes)
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -86,7 +89,7 @@ async function initHelix() {
   );
 
   // Auto-switch to INSERT mode when user clicks or focuses editable inputs
-  window.addEventListener('focusin', (e) => {
+  const handleFocusIn = (e) => {
     const mode = stateManager.getMode();
     if (
       mode === MODES.SEARCH ||
@@ -108,38 +111,88 @@ async function initHelix() {
         stateManager.setMode(MODES.INSERT);
       }
     }
-  });
+  };
 
-  window.addEventListener('focusout', (e) => {
+  window.addEventListener('focusin', handleFocusIn, true);
+  window.addEventListener('focus', handleFocusIn, true);
+
+  const handleFocusOut = (e) => {
     const mode = stateManager.getMode();
     if (mode !== MODES.INSERT) return;
     const target = e.target;
     if (isEditableElement(target)) {
       setTimeout(() => {
-        if (!isEditableElement(document.activeElement) && stateManager.getMode() === MODES.INSERT) {
+        if (!isEditableElement(getDeepActiveElement()) && stateManager.getMode() === MODES.INSERT) {
           stateManager.setMode(MODES.NORMAL);
         }
       }, 50);
     }
+  };
+
+  window.addEventListener('focusout', handleFocusOut, true);
+
+  // Lifecycle listeners to catch autofocused inputs on reload / navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncModeWithFocus);
+  } else {
+    syncModeWithFocus();
+  }
+  window.addEventListener('load', syncModeWithFocus);
+  window.addEventListener('pageshow', syncModeWithFocus);
+
+  // Staggered checks to catch deferred scripts/frameworks autofocusing inputs after reload
+  [0, 50, 150, 300, 600, 1000].forEach((delay) => {
+    setTimeout(syncModeWithFocus, delay);
   });
+
+  // Observe dynamically inserted autofocus elements (e.g. form reload / AJAX)
+  try {
+    const autofocusObserver = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        for (let i = 0; i < m.addedNodes.length; i++) {
+          const node = m.addedNodes[i];
+          if (node.nodeType === 1) {
+            if (node.hasAttribute?.('autofocus') || (node.firstElementChild && node.querySelector?.('[autofocus]'))) {
+              syncModeWithFocus();
+              return;
+            }
+          }
+        }
+      }
+    });
+    autofocusObserver.observe(document.documentElement || document, { childList: true, subtree: true });
+    setTimeout(() => autofocusObserver.disconnect(), 5000);
+  } catch (e) {}
 
   console.log('[Helix] Browser Navigation active. Press Space or ? for help.');
 }
 
-function isEditableElement(el) {
-  if (!el) return false;
-  // Ignore any element inside the Helix Shadow DOM
-  const root = typeof el.getRootNode === 'function' ? el.getRootNode() : null;
-  if (root && root instanceof ShadowRoot) return false;
-  if (el.closest && el.closest('#helix-chrome-root')) return false;
-
-  const tag = el.tagName ? el.tagName.toLowerCase() : '';
-  return (
-    (tag === 'input' && !['button', 'submit', 'checkbox', 'radio', 'file', 'hidden', 'image', 'reset'].includes(el.type)) ||
-    tag === 'textarea' ||
-    el.isContentEditable ||
-    el.getAttribute?.('role') === 'textbox'
-  );
+function syncModeWithFocus() {
+  if (stateManager.isBlacklisted) return;
+  const activeEl = getDeepActiveElement();
+  if (isEditableElement(activeEl)) {
+    const mode = stateManager.getMode();
+    if (
+      mode !== MODES.INSERT &&
+      mode !== MODES.SEARCH &&
+      mode !== MODES.COMMAND &&
+      mode !== MODES.PICKER &&
+      mode !== MODES.HINT
+    ) {
+      stateManager.setMode(MODES.INSERT);
+    }
+  } else {
+    // Check if there is an autofocus element that the browser should focus
+    const autofocusEl = document.querySelector('input[autofocus], textarea[autofocus], [contenteditable="true"][autofocus]');
+    if (autofocusEl && isEditableElement(autofocusEl) && (!document.activeElement || document.activeElement === document.body)) {
+      try {
+        autofocusEl.focus();
+        if (stateManager.getMode() !== MODES.INSERT) {
+          stateManager.setMode(MODES.INSERT);
+        }
+      } catch (e) {}
+    }
+  }
 }
 
 // Start

@@ -1,4 +1,4 @@
-import { MODES, stateManager } from '../state.js';
+import { MODES, stateManager, isEditableElement, getDeepActiveElement } from '../state.js';
 import { scroller } from '../navigation/scroller.js';
 import { Traversal } from '../navigation/traversal.js';
 import { visualCaret } from '../navigation/visual-caret.js';
@@ -36,6 +36,32 @@ export class KeyDispatcher {
     const ctrl = event.ctrlKey;
     const meta = event.metaKey;
     const alt = event.altKey;
+
+    // If an editable element is focused, ensure we are in INSERT mode (unless in modal overlays like search/command/picker)
+    const activeEl = getDeepActiveElement();
+    const hasEditableFocus = isEditableElement(activeEl);
+
+    if (
+      hasEditableFocus &&
+      mode !== MODES.INSERT &&
+      mode !== MODES.SEARCH &&
+      mode !== MODES.COMMAND &&
+      mode !== MODES.PICKER
+    ) {
+      // If the user presses Escape, blur the input and stay/enter Normal mode
+      if (key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.exitInsertMode();
+        return;
+      }
+      // Otherwise auto-sync to INSERT mode so user keystrokes are not swallowed by Helix
+      stateManager.setMode(MODES.INSERT);
+      // Let host page/input handle the keystroke
+      this.lastRawKey = key;
+      this.lastKeyPressTime = Date.now();
+      return;
+    }
 
     // Fast-escape sequence in INSERT mode (e.g. 'jk' or 'fd')
     if (mode === MODES.INSERT) {
