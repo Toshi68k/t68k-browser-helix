@@ -356,7 +356,7 @@ export class CommandBar {
       }
 
       case 'help': {
-        statusLine.setMessage('Press Space for Menu, g for Goto, [ or ] for Jumps, f for Hints, / to Search', 6000);
+        statusLine.setMessage('Press Space for Menu, g for Goto (gw hints), [ or ] for Jumps, / to Search', 6000);
         break;
       }
 

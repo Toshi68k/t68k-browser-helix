@@ -71,7 +71,7 @@ export class KeyDispatcher {
         this.exitInsertMode();
         return;
       }
-      
+
       const now = Date.now();
       if (this.escapeSequence.length === 2 && now - this.lastKeyPressTime < 350) {
         if (this.lastRawKey === this.escapeSequence[0] && key === this.escapeSequence[1]) {
@@ -321,17 +321,6 @@ export class KeyDispatcher {
       stateManager.setMode(MODES.ZOOM_MENU);
       return;
     }
-    if (key === 'f') {
-      event.preventDefault();
-      jumpList.recordPosition();
-      stateManager.setMode(MODES.HINT, { hintAction: 'click' });
-      return;
-    }
-    if (key === 'F') {
-      event.preventDefault();
-      stateManager.setMode(MODES.HINT, { hintAction: 'newTab' });
-      return;
-    }
     if (key === 'v') {
       event.preventDefault();
       stateManager.setMode(MODES.SELECT);
@@ -374,27 +363,29 @@ export class KeyDispatcher {
       return;
     }
 
-    // Fast Tab / History shortcuts
-    if (key === 'J' || key === 'gt') {
+    // Helix selection & search motions
+    if (key === '%') {
       event.preventDefault();
-      chrome.runtime.sendMessage({ type: 'NEXT_TAB' });
+      visualCaret.selectAll();
+      stateManager.setMode(MODES.SELECT);
+      statusLine.setMessage('Selected entire document (%)');
       return;
     }
-    if (key === 'K' || key === 'gp') {
+    if (key === '*') {
       event.preventDefault();
-      chrome.runtime.sendMessage({ type: 'PREV_TAB' });
+      this.searchSelection();
       return;
     }
-    if (key === 'H') {
+    if (key === ';') {
       event.preventDefault();
-      window.history.back();
+      visualCaret.collapse();
+      if (stateManager.getMode() === MODES.SELECT) {
+        stateManager.setMode(MODES.NORMAL);
+      }
+      statusLine.setMessage('Selection collapsed (;)');
       return;
     }
-    if (key === 'L') {
-      event.preventDefault();
-      window.history.forward();
-      return;
-    }
+
     if (key === 'r') {
       event.preventDefault();
       window.location.reload();
@@ -429,6 +420,18 @@ export class KeyDispatcher {
     event.stopPropagation();
 
     switch (key) {
+      case ';':
+        visualCaret.collapse();
+        stateManager.setMode(MODES.NORMAL);
+        statusLine.setMessage('Selection collapsed (;)');
+        break;
+      case '%':
+        visualCaret.selectAll();
+        statusLine.setMessage('Selected entire document (%)');
+        break;
+      case '*':
+        this.searchSelection();
+        break;
       case 'h':
       case 'ArrowLeft':
         visualCaret.move('left');
@@ -540,14 +543,56 @@ export class KeyDispatcher {
   handleGotoMenuKey(key) {
     stateManager.setMode(MODES.NORMAL);
     switch (key) {
+      case 'w':
+        jumpList.recordPosition();
+        stateManager.setMode(MODES.HINT, { hintAction: 'click' });
+        break;
+      case 'W':
+        stateManager.setMode(MODES.HINT, { hintAction: 'newTab' });
+        break;
       case 'g':
         jumpList.recordPosition();
         scroller.top();
+        statusLine.setMessage('Top of page (gg)');
         break;
       case 'e':
         jumpList.recordPosition();
         scroller.bottom();
+        statusLine.setMessage('Bottom of page (ge)');
         break;
+      case 't': {
+        jumpList.recordPosition();
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && sel.anchorNode.parentElement) {
+          sel.anchorNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          scroller.scrollBy(0, -window.innerHeight * 0.4);
+        }
+        statusLine.setMessage('Window top (gt)');
+        break;
+      }
+      case 'c': {
+        jumpList.recordPosition();
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && sel.anchorNode.parentElement) {
+          sel.anchorNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          window.scrollBy({ top: 0, behavior: 'smooth' });
+        }
+        statusLine.setMessage('Window center (gc)');
+        break;
+      }
+      case 'b': {
+        jumpList.recordPosition();
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && sel.anchorNode.parentElement) {
+          sel.anchorNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          scroller.scrollBy(0, window.innerHeight * 0.4);
+        }
+        statusLine.setMessage('Window bottom (gb)');
+        break;
+      }
       case 'a':
         chrome.runtime.sendMessage({ type: 'SWITCH_ALTERNATE_TAB' });
         break;
@@ -559,13 +604,33 @@ export class KeyDispatcher {
           window.location.href = 'view-source:' + window.location.href;
         }
         break;
-      case 'h':
+      case 'h': {
+        jumpList.recordPosition();
+        scroller.scrollTo(0, window.scrollY);
+        statusLine.setMessage('Line / Page start (gh)');
+        break;
+      }
+      case 'l': {
+        jumpList.recordPosition();
+        const docWidth = Math.max(
+          document.body ? document.body.scrollWidth : 0,
+          document.documentElement ? document.documentElement.scrollWidth : 0
+        );
+        scroller.scrollTo(Math.max(0, docWidth - window.innerWidth), window.scrollY);
+        statusLine.setMessage('Line / Page end (gl)');
+        break;
+      }
+      case '<':
+      case ',':
+      case 'H':
         window.history.back();
         break;
-      case 'l':
+      case '>':
+      case '.':
+      case 'L':
         window.history.forward();
         break;
-      case 't':
+      case 'n':
         chrome.runtime.sendMessage({ type: 'NEXT_TAB' });
         break;
       case 'p':
@@ -596,13 +661,13 @@ export class KeyDispatcher {
     stateManager.setMode(MODES.NORMAL);
     const direction = mode === MODES.BRACKET_NEXT ? 'next' : 'prev';
 
-    if (key === 't') {
+    if (key === 't' || key === 'b') {
       if (direction === 'next') chrome.runtime.sendMessage({ type: 'NEXT_TAB' });
       else chrome.runtime.sendMessage({ type: 'PREV_TAB' });
       return;
     }
 
-    if (['h', 'l', 'i', 'b', 'p', 'c'].includes(key)) {
+    if (['h', 'l', 'i', 'p', 'c'].includes(key)) {
       const jumped = Traversal.jump(key, direction);
       if (!jumped) {
         statusLine.setMessage(`No ${direction} element found for [${key}]`);
@@ -661,6 +726,38 @@ export class KeyDispatcher {
   handleZoomMenuKey(key) {
     stateManager.setMode(MODES.NORMAL);
     switch (key) {
+      case 'z':
+      case 'c': {
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && sel.anchorNode.parentElement) {
+          sel.anchorNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          statusLine.setMessage('Center view (zz)');
+        }
+        break;
+      }
+      case 't':
+      case 'k': {
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && sel.anchorNode.parentElement) {
+          sel.anchorNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          scroller.scrollBy(0, -window.innerHeight * 0.35);
+          statusLine.setMessage('Align top (zt)');
+        }
+        break;
+      }
+      case 'b':
+      case 'j': {
+        const sel = window.getSelection();
+        if (sel && sel.anchorNode && sel.anchorNode.parentElement) {
+          sel.anchorNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          scroller.scrollBy(0, window.innerHeight * 0.35);
+          statusLine.setMessage('Align bottom (zb)');
+        }
+        break;
+      }
       case 'i':
         chrome.runtime.sendMessage({ type: 'ZOOM', action: 'in' });
         break;
@@ -670,10 +767,24 @@ export class KeyDispatcher {
       case '0':
         chrome.runtime.sendMessage({ type: 'ZOOM', action: 'reset' });
         break;
-      case 'z': {
-        window.scrollBy({ top: 0, behavior: 'smooth' });
-        break;
+    }
+  }
+
+  searchSelection() {
+    let query = window.getSelection().toString().trim();
+    if (!query) {
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+        query = active.value.substring(active.selectionStart, active.selectionEnd).trim();
       }
+    }
+    if (query) {
+      jumpList.recordPosition();
+      searchBar.lastQuery = query;
+      searchBar.findNext();
+      statusLine.setMessage(`Search: "${query}" (*)`);
+    } else {
+      statusLine.setMessage('No text selected to search (*)');
     }
   }
 
@@ -705,7 +816,7 @@ export class KeyDispatcher {
       const url = text.includes('.') && !text.includes(' ')
         ? (text.includes('://') ? text : `https://${text}`)
         : `https://www.google.com/search?q=${encodeURIComponent(text)}`;
-      
+
       if (newTab) {
         chrome.runtime.sendMessage({ type: 'NEW_TAB', url, active: true });
       } else {

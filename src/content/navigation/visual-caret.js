@@ -104,6 +104,24 @@ export class VisualCaret {
     return text;
   }
 
+  selectAll() {
+    this.isActive = true;
+    const sel = window.getSelection();
+    if (!sel) return;
+    const range = document.createRange();
+    range.selectNodeContents(document.body || document.documentElement);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  collapse() {
+    this.isActive = false;
+    const sel = window.getSelection();
+    if (sel) {
+      sel.removeAllRanges();
+    }
+  }
+
   ensureSelectionVisible() {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return;
