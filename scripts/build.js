@@ -11,6 +11,21 @@ if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
+// Sync version from package.json to manifest.json
+const pkgPath = path.join(rootDir, 'package.json');
+const manifestPath = path.join(rootDir, 'manifest.json');
+
+if (fs.existsSync(pkgPath) && fs.existsSync(manifestPath)) {
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+
+  if (pkg.version && manifest.version !== pkg.version) {
+    manifest.version = pkg.version;
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf-8');
+    console.log(`Synced manifest.json version to ${pkg.version}`);
+  }
+}
+
 // Read CSS file to inline
 const cssContent = fs.readFileSync(path.join(rootDir, 'src/content/styles/helix.css'), 'utf-8');
 
