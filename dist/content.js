@@ -1,6 +1,6 @@
 /**
  * T68k Browser Helix - Bundled Standalone Content Script
- * Generated: 2026-09-02T14:00:23.299Z
+ * Generated: 2026-09-07T12:59:23.534Z
  */
 (function() {
 'use strict';
@@ -808,18 +808,28 @@ class StatusLine {
     this.scrollEl = null;
     this.titleEl = null;
     this.messageTimeout = null;
+    this.currentModeCode = 'NORMAL';
+    this.currentModeLabel = 'NOR';
   }
 
-  mount() {
+  mount(initialMode = null, initialLabel = null) {
     const container = getShadowContainer();
     if (!container || this.element) return;
+
+    if (initialMode) {
+      this.currentModeCode = initialMode;
+      this.currentModeLabel = initialLabel || initialMode.toUpperCase();
+    }
 
     this.element = document.createElement('div');
     this.element.className = 'hx-statusline';
 
+    const modeClass = (this.currentModeCode || 'normal').toLowerCase();
+    const modeText = this.currentModeLabel || 'NOR';
+
     this.element.innerHTML = `
       <div class="hx-status-left">
-        <span class="hx-mode-badge mode-nor">NOR</span>
+        <span class="hx-mode-badge mode-${modeClass}">${modeText}</span>
         <span class="hx-status-message"></span>
       </div>
       <div class="hx-status-right">
@@ -835,6 +845,7 @@ class StatusLine {
     this.scrollEl = this.element.querySelector('.hx-status-scroll');
     this.titleEl = this.element.querySelector('.hx-status-title');
 
+    this.setMode(this.currentModeCode, this.currentModeLabel);
     this.updateTitle();
     this.updateScroll();
 
@@ -845,9 +856,11 @@ class StatusLine {
   }
 
   setMode(modeCode, modeLabel) {
+    this.currentModeCode = modeCode;
+    this.currentModeLabel = modeLabel || modeCode.toUpperCase();
     if (!this.modeEl) return;
     this.modeEl.className = `hx-mode-badge mode-${modeCode.toLowerCase()}`;
-    this.modeEl.textContent = modeLabel || modeCode.toUpperCase();
+    this.modeEl.textContent = this.currentModeLabel;
   }
 
   setMessage(text, durationMs = 3000) {
@@ -2185,6 +2198,10 @@ class StateManager {
     return this.currentMode;
   }
 
+  getModeLabel() {
+    return MODE_LABELS[this.currentMode] || this.currentMode;
+  }
+
   isNormal() {
     return this.currentMode === MODES.NORMAL;
   }
@@ -2319,6 +2336,41 @@ class StateManager {
 
 const stateManager = new StateManager();
 
+function getDeepActiveElement(root = document) {
+  let el = root.activeElement;
+  while (el && el.shadowRoot && el.shadowRoot.activeElement) {
+    el = el.shadowRoot.activeElement;
+  }
+  return el;
+}
+
+function isEditableElement(el) {
+  if (!el) return false;
+  // Ignore any element inside the Helix Shadow DOM
+  const root = typeof el.getRootNode === 'function' ? el.getRootNode() : null;
+  if (root && root instanceof ShadowRoot) {
+    if (root.host && (root.host.id === 'helix-chrome-root' || root.host.closest?.('#helix-chrome-root'))) {
+      return false;
+    }
+  }
+  if (el.closest && el.closest('#helix-chrome-root')) return false;
+
+  const tag = el.tagName ? el.tagName.toLowerCase() : '';
+  if (tag === 'input') {
+    const nonTextTypes = ['button', 'submit', 'checkbox', 'radio', 'file', 'hidden', 'image', 'reset'];
+    return !nonTextTypes.includes(el.type);
+  }
+  if (tag === 'textarea') return true;
+  if (el.isContentEditable) return true;
+
+  const role = el.getAttribute?.('role');
+  if (role && ['textbox', 'searchbox', 'combobox'].includes(role)) {
+    return true;
+  }
+
+  return false;
+}
+
 
 /* ========== FILE: src/content/keymap/helix-keys.js ========== */
 
@@ -2359,6 +2411,32 @@ class KeyDispatcher {
     const ctrl = event.ctrlKey;
     const meta = event.metaKey;
     const alt = event.altKey;
+
+    // If an editable element is focused, ensure we are in INSERT mode (unless in modal overlays like search/command/picker)
+    const activeEl = getDeepActiveElement();
+    const hasEditableFocus = isEditableElement(activeEl);
+
+    if (
+      hasEditableFocus &&
+      mode !== MODES.INSERT &&
+      mode !== MODES.SEARCH &&
+      mode !== MODES.COMMAND &&
+      mode !== MODES.PICKER
+    ) {
+      // If the user presses Escape, blur the input and stay/enter Normal mode
+      if (key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.exitInsertMode();
+        return;
+      }
+      // Otherwise auto-sync to INSERT mode so user keystrokes are not swallowed by Helix
+      stateManager.setMode(MODES.INSERT);
+      // Let host page/input handle the keystroke
+      this.lastRawKey = key;
+      this.lastKeyPressTime = Date.now();
+      return;
+    }
 
     // Fast-escape sequence in INSERT mode (e.g. 'jk' or 'fd')
     if (mode === MODES.INSERT) {
@@ -3089,8 +3167,11 @@ async function initHelix() {
   // Initialize isolated Shadow DOM
   await initShadowRoot(settings.theme || 'helix_dark');
 
+  // Sync mode with current focus before/during mounting status line
+  syncModeWithFocus();
+
   // Mount Helix Status Line
-  statusLine.mount();
+  statusLine.mount(stateManager.getMode(), stateManager.getModeLabel());
 
   // Listen to Storage updates (e.g. options page changes)
   chrome.storage.onChanged.addListener((changes, area) => {
@@ -3115,7 +3196,7 @@ async function initHelix() {
   );
 
   // Auto-switch to INSERT mode when user clicks or focuses editable inputs
-  window.addEventListener('focusin', (e) => {
+  const handleFocusIn = (e) => {
     const mode = stateManager.getMode();
     if (
       mode === MODES.SEARCH ||
@@ -3137,38 +3218,88 @@ async function initHelix() {
         stateManager.setMode(MODES.INSERT);
       }
     }
-  });
+  };
 
-  window.addEventListener('focusout', (e) => {
+  window.addEventListener('focusin', handleFocusIn, true);
+  window.addEventListener('focus', handleFocusIn, true);
+
+  const handleFocusOut = (e) => {
     const mode = stateManager.getMode();
     if (mode !== MODES.INSERT) return;
     const target = e.target;
     if (isEditableElement(target)) {
       setTimeout(() => {
-        if (!isEditableElement(document.activeElement) && stateManager.getMode() === MODES.INSERT) {
+        if (!isEditableElement(getDeepActiveElement()) && stateManager.getMode() === MODES.INSERT) {
           stateManager.setMode(MODES.NORMAL);
         }
       }, 50);
     }
+  };
+
+  window.addEventListener('focusout', handleFocusOut, true);
+
+  // Lifecycle listeners to catch autofocused inputs on reload / navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncModeWithFocus);
+  } else {
+    syncModeWithFocus();
+  }
+  window.addEventListener('load', syncModeWithFocus);
+  window.addEventListener('pageshow', syncModeWithFocus);
+
+  // Staggered checks to catch deferred scripts/frameworks autofocusing inputs after reload
+  [0, 50, 150, 300, 600, 1000].forEach((delay) => {
+    setTimeout(syncModeWithFocus, delay);
   });
+
+  // Observe dynamically inserted autofocus elements (e.g. form reload / AJAX)
+  try {
+    const autofocusObserver = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        for (let i = 0; i < m.addedNodes.length; i++) {
+          const node = m.addedNodes[i];
+          if (node.nodeType === 1) {
+            if (node.hasAttribute?.('autofocus') || (node.firstElementChild && node.querySelector?.('[autofocus]'))) {
+              syncModeWithFocus();
+              return;
+            }
+          }
+        }
+      }
+    });
+    autofocusObserver.observe(document.documentElement || document, { childList: true, subtree: true });
+    setTimeout(() => autofocusObserver.disconnect(), 5000);
+  } catch (e) {}
 
   console.log('[Helix] Browser Navigation active. Press Space or ? for help.');
 }
 
-function isEditableElement(el) {
-  if (!el) return false;
-  // Ignore any element inside the Helix Shadow DOM
-  const root = typeof el.getRootNode === 'function' ? el.getRootNode() : null;
-  if (root && root instanceof ShadowRoot) return false;
-  if (el.closest && el.closest('#helix-chrome-root')) return false;
-
-  const tag = el.tagName ? el.tagName.toLowerCase() : '';
-  return (
-    (tag === 'input' && !['button', 'submit', 'checkbox', 'radio', 'file', 'hidden', 'image', 'reset'].includes(el.type)) ||
-    tag === 'textarea' ||
-    el.isContentEditable ||
-    el.getAttribute?.('role') === 'textbox'
-  );
+function syncModeWithFocus() {
+  if (stateManager.isBlacklisted) return;
+  const activeEl = getDeepActiveElement();
+  if (isEditableElement(activeEl)) {
+    const mode = stateManager.getMode();
+    if (
+      mode !== MODES.INSERT &&
+      mode !== MODES.SEARCH &&
+      mode !== MODES.COMMAND &&
+      mode !== MODES.PICKER &&
+      mode !== MODES.HINT
+    ) {
+      stateManager.setMode(MODES.INSERT);
+    }
+  } else {
+    // Check if there is an autofocus element that the browser should focus
+    const autofocusEl = document.querySelector('input[autofocus], textarea[autofocus], [contenteditable="true"][autofocus]');
+    if (autofocusEl && isEditableElement(autofocusEl) && (!document.activeElement || document.activeElement === document.body)) {
+      try {
+        autofocusEl.focus();
+        if (stateManager.getMode() !== MODES.INSERT) {
+          stateManager.setMode(MODES.INSERT);
+        }
+      } catch (e) {}
+    }
+  }
 }
 
 // Start

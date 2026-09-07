@@ -14,18 +14,28 @@ export class StatusLine {
     this.scrollEl = null;
     this.titleEl = null;
     this.messageTimeout = null;
+    this.currentModeCode = 'NORMAL';
+    this.currentModeLabel = 'NOR';
   }
 
-  mount() {
+  mount(initialMode = null, initialLabel = null) {
     const container = getShadowContainer();
     if (!container || this.element) return;
+
+    if (initialMode) {
+      this.currentModeCode = initialMode;
+      this.currentModeLabel = initialLabel || initialMode.toUpperCase();
+    }
 
     this.element = document.createElement('div');
     this.element.className = 'hx-statusline';
 
+    const modeClass = (this.currentModeCode || 'normal').toLowerCase();
+    const modeText = this.currentModeLabel || 'NOR';
+
     this.element.innerHTML = `
       <div class="hx-status-left">
-        <span class="hx-mode-badge mode-nor">NOR</span>
+        <span class="hx-mode-badge mode-${modeClass}">${modeText}</span>
         <span class="hx-status-message"></span>
       </div>
       <div class="hx-status-right">
@@ -41,6 +51,7 @@ export class StatusLine {
     this.scrollEl = this.element.querySelector('.hx-status-scroll');
     this.titleEl = this.element.querySelector('.hx-status-title');
 
+    this.setMode(this.currentModeCode, this.currentModeLabel);
     this.updateTitle();
     this.updateScroll();
 
@@ -51,9 +62,11 @@ export class StatusLine {
   }
 
   setMode(modeCode, modeLabel) {
+    this.currentModeCode = modeCode;
+    this.currentModeLabel = modeLabel || modeCode.toUpperCase();
     if (!this.modeEl) return;
     this.modeEl.className = `hx-mode-badge mode-${modeCode.toLowerCase()}`;
-    this.modeEl.textContent = modeLabel || modeCode.toUpperCase();
+    this.modeEl.textContent = this.currentModeLabel;
   }
 
   setMessage(text, durationMs = 3000) {
