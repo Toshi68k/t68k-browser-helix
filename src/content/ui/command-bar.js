@@ -33,6 +33,8 @@ const AVAILABLE_COMMANDS = [
   { name: 'theme', desc: 'Change UI color theme', usage: ':theme <name>' },
   { name: 'settings', desc: 'Open Helix extension options', usage: ':settings' },
   { name: 'options', desc: 'Alias for settings', usage: ':options' },
+  { name: 'symbols', desc: 'Open document heading / symbol outline picker', usage: ':symbols' },
+  { name: 'outline', desc: 'Alias for symbols outline picker', usage: ':outline' },
   { name: 'duplicate', desc: 'Duplicate current tab', usage: ':duplicate' },
   { name: 'help', desc: 'Show keybindings and command help', usage: ':help' }
 ];
@@ -352,6 +354,15 @@ export class CommandBar {
       case 'settings':
       case 'options': {
         chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' });
+        break;
+      }
+
+      case 'symbols':
+      case 'symbol':
+      case 'outline': {
+        if (typeof stateManager !== 'undefined' && typeof MODES !== 'undefined') {
+          stateManager.setMode(MODES.PICKER, { pickerType: 'symbols' });
+        }
         break;
       }
 

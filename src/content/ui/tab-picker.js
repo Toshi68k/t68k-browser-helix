@@ -1,8 +1,10 @@
 /**
- * Helix Buffer / Tab / Bookmark / History Fuzzy Picker (<Space>b, <Space>f, <Space>h)
+ * Helix Buffer / Tab / Bookmark / History / Symbol Fuzzy Picker (<Space>b, <Space>f, <Space>h, <Space>s, <Space>o)
  */
 
 import { getShadowContainer } from './shadow-root.js';
+import { jumpList } from '../navigation/jump-list.js';
+import { Traversal } from '../navigation/traversal.js';
 
 export class TabPicker {
   constructor() {
@@ -13,7 +15,7 @@ export class TabPicker {
     this.items = [];
     this.filtered = [];
     this.selectedIndex = 0;
-    this.mode = 'tabs'; // 'tabs' | 'bookmarks' | 'history'
+    this.mode = 'tabs'; // 'tabs' | 'bookmarks' | 'history' | 'symbols'
     this.onClose = null;
   }
 
@@ -28,12 +30,23 @@ export class TabPicker {
     this.element = document.createElement('div');
     this.element.className = 'hx-tab-picker-overlay';
 
-    const titlePlaceholder = mode === 'tabs' ? 'Switch buffer / tab...' : (mode === 'bookmarks' ? 'Search bookmarks...' : 'Search history...');
+    let icon = '󰕘';
+    let titlePlaceholder = 'Switch buffer / tab...';
+    if (mode === 'bookmarks') {
+      icon = '★';
+      titlePlaceholder = 'Search bookmarks...';
+    } else if (mode === 'history') {
+      icon = '󰋚';
+      titlePlaceholder = 'Search history...';
+    } else if (mode === 'symbols') {
+      icon = '§';
+      titlePlaceholder = 'Jump to heading / symbol...';
+    }
 
     this.element.innerHTML = `
       <div class="hx-tab-picker-modal">
         <div class="hx-tab-picker-header">
-          <span style="color: var(--hx-accent); font-weight: 700;">󰕘</span>
+          <span style="color: var(--hx-accent); font-weight: 700; font-family: monospace, sans-serif; font-size: 15px;">${icon}</span>
           <input type="text" class="hx-tab-picker-search" placeholder="${titlePlaceholder}" spellcheck="false" />
         </div>
         <div class="hx-tab-picker-list"></div>
@@ -92,6 +105,52 @@ export class TabPicker {
         favIconUrl: '',
         index: idx + 1
       }));
+    } else if (this.mode === 'symbols') {
+      const headingEls = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]'));
+      const visibleHeadings = headingEls.filter(el => {
+        if (el.closest('#helix-chrome-root')) return false;
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.visibility !== 'hidden' &&
+          style.display !== 'none' &&
+          style.opacity !== '0'
+        );
+      });
+
+      // Sort by vertical position on page
+      visibleHeadings.sort((a, b) => {
+        const topA = a.getBoundingClientRect().top + window.scrollY;
+        const topB = b.getBoundingClientRect().top + window.scrollY;
+        if (Math.abs(topA - topB) > 2) return topA - topB;
+        return a.getBoundingClientRect().left - b.getBoundingClientRect().left;
+      });
+
+      const docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 1);
+
+      this.items = visibleHeadings.map((el, idx) => {
+        const tag = el.tagName.toLowerCase();
+        let level = 2;
+        if (/^h[1-6]$/.test(tag)) {
+          level = parseInt(tag[1], 10);
+        } else if (el.hasAttribute('aria-level')) {
+          level = parseInt(el.getAttribute('aria-level'), 10) || 2;
+        }
+        const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        const pct = Math.min(100, Math.max(0, Math.round((top / docHeight) * 100)));
+
+        return {
+          id: `heading-${idx}`,
+          element: el,
+          level,
+          title: text || `Heading ${level}`,
+          percent: pct,
+          index: idx + 1
+        };
+      }).filter(item => item.title && item.title.trim().length > 0);
     }
 
     this.filterItems();
@@ -102,8 +161,14 @@ export class TabPicker {
     if (!query) {
       this.filtered = [...this.items];
     } else {
+      const tokens = query.split(/\s+/).filter(Boolean);
       this.filtered = this.items.filter(item => {
-        return item.title.toLowerCase().includes(query) || item.url.toLowerCase().includes(query);
+        const searchTarget = [
+          item.title,
+          item.url || '',
+          item.level ? `h${item.level}` : ''
+        ].join(' ').toLowerCase();
+        return tokens.every(token => searchTarget.includes(token));
       });
     }
 
@@ -113,12 +178,29 @@ export class TabPicker {
 
   renderList() {
     if (this.filtered.length === 0) {
-      this.listEl.innerHTML = `<div style="padding: 12px; color: var(--hx-text-muted); text-align: center;">No matching items</div>`;
+      const msg = (this.mode === 'symbols' && this.items.length === 0)
+        ? 'No headings found on this page'
+        : 'No matching items';
+      this.listEl.innerHTML = `<div style="padding: 16px; color: var(--hx-text-muted); text-align: center; font-size: 13px;">${msg}</div>`;
       return;
     }
 
     this.listEl.innerHTML = this.filtered.map((item, idx) => {
       const isSelected = idx === this.selectedIndex;
+
+      if (this.mode === 'symbols') {
+        const indent = Math.max(0, (item.level - 1) * 14);
+        return `
+          <div class="hx-tab-item hx-symbol-item ${isSelected ? 'selected' : ''}" data-idx="${idx}">
+            <span class="hx-heading-badge hx-level-${item.level}">H${item.level}</span>
+            <div class="hx-tab-info" style="padding-left: ${indent}px;">
+              <span class="hx-tab-title">${this.escapeHtml(item.title)}</span>
+            </div>
+            <span class="hx-tab-index">${item.percent !== undefined ? `${item.percent}%` : item.index}</span>
+          </div>
+        `;
+      }
+
       const favicon = item.favIconUrl
         ? `<img class="hx-tab-favicon" src="${item.favIconUrl}" alt="" onerror="this.style.display='none'" />`
         : `<span style="font-size: 14px; width: 16px; text-align:center;">📄</span>`;
@@ -181,6 +263,22 @@ export class TabPicker {
     const item = this.filtered[idx];
     if (!item) return;
 
+    if (this.mode === 'symbols') {
+      if (item.element) {
+        if (typeof jumpList !== 'undefined' && jumpList.recordPosition) {
+          jumpList.recordPosition();
+        }
+        item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (typeof Traversal !== 'undefined' && Traversal.flashHighlight) {
+          Traversal.flashHighlight(item.element);
+        } else {
+          this.flashHeading(item.element);
+        }
+      }
+      this.close();
+      return;
+    }
+
     if (this.mode === 'tabs') {
       await chrome.runtime.sendMessage({
         type: 'SWITCH_TAB',
@@ -193,6 +291,17 @@ export class TabPicker {
     }
 
     this.close();
+  }
+
+  flashHeading(element) {
+    const originalOutline = element.style.outline;
+    const originalTransition = element.style.transition;
+    element.style.transition = 'outline 0.15s ease';
+    element.style.outline = '3px solid #b4befe';
+    setTimeout(() => {
+      element.style.outline = originalOutline;
+      element.style.transition = originalTransition;
+    }, 600);
   }
 
   escapeHtml(str) {

@@ -1,11 +1,11 @@
 /**
  * T68k Browser Helix - Bundled Standalone Content Script
- * Generated: 2026-09-07T14:10:03.724Z
+ * Generated: 2026-09-09T13:14:57.982Z
  */
 (function() {
 'use strict';
 
-const INLINED_HELIX_CSS = "/**\n * T68k Browser Helix - Core UI Stylesheet\n * Encapsulated completely inside Shadow DOM (#helix-chrome-root)\n */\n\n:host {\n  all: initial;\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n  z-index: 2147483647;\n  font-family: -apple-system, BlinkMacSystemFont, \"JetBrains Mono\", \"Fira Code\", \"SF Pro Display\", \"Segoe UI\", Roboto, monospace;\n  font-size: 13px;\n  line-height: 1.4;\n  box-sizing: border-box;\n}\n\n*,\n*::before,\n*::after {\n  box-sizing: inherit;\n  margin: 0;\n  padding: 0;\n}\n\n/* ==================== THEME DEFINITIONS ==================== */\n\n.theme-helix_dark {\n  --hx-bg: #141423;\n  --hx-surface: #1e1e2e;\n  --hx-surface-elevated: #28283d;\n  --hx-border: #3b3b58;\n  --hx-text: #dcd7ba;\n  --hx-text-muted: #7e7e9a;\n  --hx-accent: #b4befe;\n  --hx-accent-dim: #727169;\n  --hx-mode-nor-bg: #89b4fa;\n  --hx-mode-nor-fg: #11111b;\n  --hx-mode-ins-bg: #a6e3a1;\n  --hx-mode-ins-fg: #11111b;\n  --hx-mode-sel-bg: #cba6f7;\n  --hx-mode-sel-fg: #11111b;\n  --hx-mode-cmd-bg: #fab387;\n  --hx-mode-cmd-fg: #11111b;\n  --hx-mode-src-bg: #f9e2af;\n  --hx-mode-src-fg: #11111b;\n  --hx-hint-bg: #f9e2af;\n  --hx-hint-fg: #11111b;\n  --hx-hint-border: #fab387;\n  --hx-highlight: rgba(180, 190, 254, 0.35);\n  --hx-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);\n}\n\n.theme-catppuccin_mocha {\n  --hx-bg: #1e1e2e;\n  --hx-surface: #181825;\n  --hx-surface-elevated: #313244;\n  --hx-border: #45475a;\n  --hx-text: #cdd6f4;\n  --hx-text-muted: #6c7086;\n  --hx-accent: #cba6f7;\n  --hx-accent-dim: #585b70;\n  --hx-mode-nor-bg: #89b4fa;\n  --hx-mode-nor-fg: #11111b;\n  --hx-mode-ins-bg: #a6e3a1;\n  --hx-mode-ins-fg: #11111b;\n  --hx-mode-sel-bg: #f5c2e7;\n  --hx-mode-sel-fg: #11111b;\n  --hx-mode-cmd-bg: #fab387;\n  --hx-mode-cmd-fg: #11111b;\n  --hx-mode-src-bg: #f9e2af;\n  --hx-mode-src-fg: #11111b;\n  --hx-hint-bg: #f9e2af;\n  --hx-hint-fg: #11111b;\n  --hx-hint-border: #fab387;\n  --hx-highlight: rgba(203, 166, 247, 0.35);\n  --hx-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);\n}\n\n\n/* ==================== HELIX STATUS LINE ==================== */\n\n.hx-statusline {\n  position: fixed;\n  bottom: 8px;\n  right: 12px;\n  height: 26px;\n  max-width: 480px;\n  width: auto;\n  background-color: var(--hx-surface);\n  color: var(--hx-text);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 0 8px;\n  font-family: inherit;\n  font-size: 11.5px;\n  font-weight: 500;\n  user-select: none;\n  pointer-events: none;\n  z-index: 10000;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);\n  backdrop-filter: blur(10px);\n  -webkit-backdrop-filter: blur(10px);\n  transition: transform 0.15s ease, opacity 0.15s ease;\n}\n\n.hx-statusline.hx-hud-dimmed {\n  opacity: 0.1;\n}\n\n.hx-statusline.hidden {\n  transform: translateY(150%);\n  opacity: 0;\n}\n\n.hx-mode-badge {\n  padding: 2px 8px;\n  font-weight: 700;\n  font-size: 10.5px;\n  letter-spacing: 0.5px;\n  text-transform: uppercase;\n  border-radius: 2px;\n  transition: background-color 0.12s ease, color 0.12s ease;\n}\n\n.hx-mode-badge.mode-nor {\n  background: var(--hx-mode-nor-bg);\n  color: var(--hx-mode-nor-fg);\n}\n\n.hx-mode-badge.mode-ins {\n  background: var(--hx-mode-ins-bg);\n  color: var(--hx-mode-ins-fg);\n}\n\n.hx-mode-badge.mode-sel {\n  background: var(--hx-mode-sel-bg);\n  color: var(--hx-mode-sel-fg);\n}\n\n.hx-mode-badge.mode-cmd {\n  background: var(--hx-mode-cmd-bg);\n  color: var(--hx-mode-cmd-fg);\n}\n\n.hx-mode-badge.mode-src {\n  background: var(--hx-mode-src-bg);\n  color: var(--hx-mode-src-fg);\n}\n\n.hx-mode-badge.mode-hnt {\n  background: var(--hx-hint-bg);\n  color: var(--hx-hint-fg);\n}\n\n.hx-mode-badge.mode-spc {\n  background: var(--hx-accent);\n  color: var(--hx-surface);\n}\n\n.hx-mode-badge.mode-gto {\n  background: var(--hx-accent);\n  color: var(--hx-surface);\n}\n\n.hx-mode-badge.mode-pck,\n.hx-mode-badge.mode-picker {\n  background: var(--hx-accent);\n  color: var(--hx-surface);\n}\n\n.hx-status-message {\n  color: var(--hx-text);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  max-width: 450px;\n}\n\n.hx-status-keys {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  padding: 1px 6px;\n  border-radius: 3px;\n  border: 1px solid var(--hx-border);\n  font-family: inherit;\n  font-size: 10.5px;\n  min-width: 24px;\n  text-align: center;\n}\n\n.hx-status-scroll {\n  color: var(--hx-text-muted);\n  font-variant-numeric: tabular-nums;\n}\n\n.hx-status-title {\n  color: var(--hx-text-muted);\n  max-width: 300px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* ==================== WHICH-KEY POPUP ==================== */\n\n.hx-which-key {\n  position: fixed;\n  bottom: 40px;\n  right: 12px;\n  background: var(--hx-bg);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  box-shadow: var(--hx-shadow);\n  padding: 10px 14px;\n  color: var(--hx-text);\n  max-width: 420px;\n  min-width: 280px;\n  pointer-events: auto;\n  z-index: 10001;\n  animation: hx-fade-in 0.1s cubic-bezier(0.16, 1, 0.3, 1);\n  backdrop-filter: blur(12px);\n  -webkit-backdrop-filter: blur(12px);\n}\n\n.hx-which-key-title {\n  font-size: 11px;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.8px;\n  color: var(--hx-accent);\n  margin-bottom: 8px;\n  padding-bottom: 4px;\n  border-bottom: 1px solid var(--hx-border);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.hx-which-key-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));\n  gap: 6px 12px;\n}\n\n.hx-which-key-item {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px;\n  cursor: pointer;\n  padding: 2px 4px;\n  border-radius: 4px;\n  transition: background-color 0.1s ease;\n}\n\n.hx-which-key-item:hover {\n  background: var(--hx-surface-elevated);\n}\n\n.hx-key-badge {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  font-weight: 700;\n  padding: 1px 5px;\n  border-radius: 3px;\n  border: 1px solid var(--hx-border);\n  min-width: 18px;\n  text-align: center;\n  font-size: 11px;\n}\n\n.hx-key-label {\n  color: var(--hx-text);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n/* ==================== LINK HINT OVERLAYS ==================== */\n\n.hx-hint-marker {\n  position: absolute;\n  z-index: 2147483640;\n  background-color: var(--hx-hint-bg);\n  color: var(--hx-hint-fg);\n  border: 1px solid var(--hx-hint-border);\n  font-family: inherit;\n  font-size: 11px;\n  font-weight: 800;\n  padding: 1px 4px;\n  border-radius: 3px;\n  line-height: 1.1;\n  text-transform: uppercase;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);\n  pointer-events: none;\n  opacity: 0.95;\n  transform: translateY(-2px);\n  animation: hx-pop-in 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);\n}\n\n.hx-hint-marker .matched {\n  color: #d20f39;\n  text-decoration: underline;\n  font-weight: 900;\n}\n\n/* ==================== COMMAND BAR & PROMPT ==================== */\n\n.hx-command-bar {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  background: var(--hx-bg);\n  border-top: 1px solid var(--hx-border);\n  box-shadow: var(--hx-shadow);\n  padding: 6px 12px;\n  display: flex;\n  flex-direction: column;\n  pointer-events: auto;\n  z-index: 10002;\n  animation: hx-slide-up 0.1s ease;\n}\n\n.hx-command-input-wrapper {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.hx-command-prompt-symbol {\n  color: var(--hx-mode-cmd-bg);\n  font-weight: 800;\n  font-size: 15px;\n}\n\n.hx-command-input {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--hx-text);\n  font-family: inherit;\n  font-size: 13px;\n  font-weight: 500;\n}\n\n.hx-command-completions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 6px;\n  padding-top: 6px;\n  border-top: 1px solid var(--hx-border);\n  max-height: 120px;\n  overflow-y: auto;\n}\n\n.hx-command-completion-item {\n  padding: 2px 8px;\n  background: var(--hx-surface);\n  color: var(--hx-text-muted);\n  border-radius: 3px;\n  font-size: 11px;\n  cursor: pointer;\n  border: 1px solid transparent;\n}\n\n.hx-command-completion-item.active {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  border-color: var(--hx-accent);\n}\n\n/* ==================== SEARCH BAR ==================== */\n\n.hx-search-bar {\n  position: fixed;\n  bottom: 8px;\n  left: 12px;\n  background: var(--hx-bg);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  box-shadow: var(--hx-shadow);\n  padding: 6px 12px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 320px;\n  max-width: 480px;\n  pointer-events: auto;\n  z-index: 10002;\n  animation: hx-fade-in 0.1s ease;\n}\n\n.hx-search-icon {\n  color: var(--hx-mode-src-bg);\n  font-weight: 800;\n}\n\n.hx-search-input {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--hx-text);\n  font-family: inherit;\n  font-size: 13px;\n}\n\n.hx-search-count {\n  font-size: 11px;\n  color: var(--hx-text-muted);\n  font-variant-numeric: tabular-nums;\n}\n\n/* ==================== TAB / BUFFER PICKER ==================== */\n\n.hx-tab-picker-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  padding-top: 10vh;\n  pointer-events: auto;\n  z-index: 10005;\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n}\n\n.hx-tab-picker-modal {\n  width: 580px;\n  max-width: 90vw;\n  background: var(--hx-bg);\n  border: 1px solid var(--hx-border);\n  border-radius: 8px;\n  box-shadow: var(--hx-shadow);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  animation: hx-scale-up 0.12s cubic-bezier(0.16, 1, 0.3, 1);\n}\n\n.hx-tab-picker-header {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 10px 14px;\n  border-bottom: 1px solid var(--hx-border);\n  background: var(--hx-surface);\n}\n\n.hx-tab-picker-search {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--hx-text);\n  font-family: inherit;\n  font-size: 14px;\n}\n\n.hx-tab-picker-list {\n  max-height: 380px;\n  overflow-y: auto;\n  padding: 6px;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.hx-tab-item {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: background 0.1s ease;\n}\n\n.hx-tab-item:hover,\n.hx-tab-item.selected {\n  background: var(--hx-surface-elevated);\n}\n\n.hx-tab-item.selected {\n  border-left: 3px solid var(--hx-accent);\n}\n\n.hx-tab-favicon {\n  width: 16px;\n  height: 16px;\n  border-radius: 2px;\n  flex-shrink: 0;\n}\n\n.hx-tab-info {\n  flex: 1;\n  overflow: hidden;\n  display: flex;\n  flex-direction: column;\n}\n\n.hx-tab-title {\n  color: var(--hx-text);\n  font-size: 12.5px;\n  font-weight: 500;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.hx-tab-url {\n  color: var(--hx-text-muted);\n  font-size: 10.5px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.hx-tab-index {\n  color: var(--hx-accent);\n  font-size: 11px;\n  font-weight: 700;\n  min-width: 20px;\n  text-align: right;\n}\n\n/* ==================== CARET / VISUAL SELECTION ==================== */\n\n.hx-visual-caret {\n  position: absolute;\n  width: 2px;\n  background-color: var(--hx-accent);\n  box-shadow: 0 0 6px var(--hx-accent);\n  pointer-events: none;\n  z-index: 2147483630;\n  animation: hx-blink 1s ease-in-out infinite;\n}\n\n/* ==================== ZEN / READER MODE ==================== */\n\n.hx-reader-overlay {\n  position: fixed;\n  inset: 0;\n  background: var(--hx-bg);\n  color: var(--hx-text);\n  overflow-y: auto;\n  padding: 40px 20px 80px 20px;\n  pointer-events: auto;\n  z-index: 2147483642;\n  display: flex;\n  justify-content: center;\n  animation: hx-fade-in 0.15s ease;\n}\n\n.hx-reader-container {\n  width: 760px;\n  max-width: 100%;\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n\n.hx-reader-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid var(--hx-border);\n  padding-bottom: 12px;\n}\n\n.hx-reader-tag {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  font-weight: 700;\n  font-size: 11px;\n  letter-spacing: 1px;\n  padding: 3px 8px;\n  border-radius: 3px;\n  border: 1px solid var(--hx-border);\n}\n\n.hx-reader-close-btn {\n  background: var(--hx-surface);\n  color: var(--hx-text-muted);\n  border: 1px solid var(--hx-border);\n  padding: 4px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-family: inherit;\n  font-size: 12px;\n  transition: all 0.1s ease;\n}\n\n.hx-reader-close-btn:hover {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-text);\n}\n\n.hx-reader-title {\n  font-size: 26px;\n  font-weight: 800;\n  line-height: 1.3;\n  color: var(--hx-text);\n  margin-top: 10px;\n}\n\n.hx-reader-content {\n  font-size: 15px;\n  line-height: 1.7;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n  color: var(--hx-text);\n}\n\n.hx-reader-content h2 {\n  font-size: 20px;\n  font-weight: 700;\n  color: var(--hx-accent);\n  margin-top: 20px;\n  border-bottom: 1px solid var(--hx-border);\n  padding-bottom: 6px;\n}\n\n.hx-reader-content h3 {\n  font-size: 17px;\n  font-weight: 600;\n  color: var(--hx-text);\n  margin-top: 14px;\n}\n\n.hx-reader-content p {\n  color: var(--hx-text);\n}\n\n.hx-reader-content blockquote {\n  border-left: 3px solid var(--hx-accent);\n  padding-left: 14px;\n  color: var(--hx-text-muted);\n  font-style: italic;\n}\n\n.hx-reader-content li {\n  margin-left: 20px;\n}\n\n.hx-reader-code {\n  background: var(--hx-surface);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  padding: 12px 14px;\n  overflow-x: auto;\n  font-family: inherit;\n  font-size: 13px;\n  line-height: 1.5;\n  color: var(--hx-text);\n}\n\n/* ==================== ANIMATIONS ==================== */\n\n@keyframes hx-fade-in {\n  from {\n    opacity: 0;\n    transform: translateY(4px);\n  }\n\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes hx-pop-in {\n  from {\n    opacity: 0;\n    transform: scale(0.85);\n  }\n\n  to {\n    opacity: 1;\n    transform: scale(1);\n  }\n}\n\n@keyframes hx-slide-up {\n  from {\n    transform: translateY(100%);\n  }\n\n  to {\n    transform: translateY(0);\n  }\n}\n\n@keyframes hx-scale-up {\n  from {\n    opacity: 0;\n    transform: scale(0.96) translateY(-8px);\n  }\n\n  to {\n    opacity: 1;\n    transform: scale(1) translateY(0);\n  }\n}\n\n@keyframes hx-blink {\n\n  0%,\n  100% {\n    opacity: 1;\n  }\n\n  50% {\n    opacity: 0.3;\n  }\n}";
+const INLINED_HELIX_CSS = "/**\n * T68k Browser Helix - Core UI Stylesheet\n * Encapsulated completely inside Shadow DOM (#helix-chrome-root)\n */\n\n:host {\n  all: initial;\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n  z-index: 2147483647;\n  font-family: -apple-system, BlinkMacSystemFont, \"JetBrains Mono\", \"Fira Code\", \"SF Pro Display\", \"Segoe UI\", Roboto, monospace;\n  font-size: 13px;\n  line-height: 1.4;\n  box-sizing: border-box;\n}\n\n*,\n*::before,\n*::after {\n  box-sizing: inherit;\n  margin: 0;\n  padding: 0;\n}\n\n/* ==================== THEME DEFINITIONS ==================== */\n\n.theme-helix_dark {\n  --hx-bg: #141423;\n  --hx-surface: #1e1e2e;\n  --hx-surface-elevated: #28283d;\n  --hx-border: #3b3b58;\n  --hx-text: #dcd7ba;\n  --hx-text-muted: #7e7e9a;\n  --hx-accent: #b4befe;\n  --hx-accent-dim: #727169;\n  --hx-mode-nor-bg: #89b4fa;\n  --hx-mode-nor-fg: #11111b;\n  --hx-mode-ins-bg: #a6e3a1;\n  --hx-mode-ins-fg: #11111b;\n  --hx-mode-sel-bg: #cba6f7;\n  --hx-mode-sel-fg: #11111b;\n  --hx-mode-cmd-bg: #fab387;\n  --hx-mode-cmd-fg: #11111b;\n  --hx-mode-src-bg: #f9e2af;\n  --hx-mode-src-fg: #11111b;\n  --hx-hint-bg: #f9e2af;\n  --hx-hint-fg: #11111b;\n  --hx-hint-border: #fab387;\n  --hx-highlight: rgba(180, 190, 254, 0.35);\n  --hx-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);\n}\n\n.theme-catppuccin_mocha {\n  --hx-bg: #1e1e2e;\n  --hx-surface: #181825;\n  --hx-surface-elevated: #313244;\n  --hx-border: #45475a;\n  --hx-text: #cdd6f4;\n  --hx-text-muted: #6c7086;\n  --hx-accent: #cba6f7;\n  --hx-accent-dim: #585b70;\n  --hx-mode-nor-bg: #89b4fa;\n  --hx-mode-nor-fg: #11111b;\n  --hx-mode-ins-bg: #a6e3a1;\n  --hx-mode-ins-fg: #11111b;\n  --hx-mode-sel-bg: #f5c2e7;\n  --hx-mode-sel-fg: #11111b;\n  --hx-mode-cmd-bg: #fab387;\n  --hx-mode-cmd-fg: #11111b;\n  --hx-mode-src-bg: #f9e2af;\n  --hx-mode-src-fg: #11111b;\n  --hx-hint-bg: #f9e2af;\n  --hx-hint-fg: #11111b;\n  --hx-hint-border: #fab387;\n  --hx-highlight: rgba(203, 166, 247, 0.35);\n  --hx-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);\n}\n\n\n/* ==================== HELIX STATUS LINE ==================== */\n\n.hx-statusline {\n  position: fixed;\n  bottom: 8px;\n  right: 12px;\n  height: 26px;\n  max-width: 480px;\n  width: auto;\n  background-color: var(--hx-surface);\n  color: var(--hx-text);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  padding: 0 8px;\n  font-family: inherit;\n  font-size: 11.5px;\n  font-weight: 500;\n  user-select: none;\n  pointer-events: none;\n  z-index: 10000;\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);\n  backdrop-filter: blur(10px);\n  -webkit-backdrop-filter: blur(10px);\n  transition: transform 0.15s ease, opacity 0.15s ease;\n}\n\n.hx-statusline.hx-hud-dimmed {\n  opacity: 0.1;\n}\n\n.hx-statusline.hidden {\n  transform: translateY(150%);\n  opacity: 0;\n}\n\n.hx-mode-badge {\n  padding: 2px 8px;\n  font-weight: 700;\n  font-size: 10.5px;\n  letter-spacing: 0.5px;\n  text-transform: uppercase;\n  border-radius: 2px;\n  transition: background-color 0.12s ease, color 0.12s ease;\n}\n\n.hx-mode-badge.mode-nor {\n  background: var(--hx-mode-nor-bg);\n  color: var(--hx-mode-nor-fg);\n}\n\n.hx-mode-badge.mode-ins {\n  background: var(--hx-mode-ins-bg);\n  color: var(--hx-mode-ins-fg);\n}\n\n.hx-mode-badge.mode-sel {\n  background: var(--hx-mode-sel-bg);\n  color: var(--hx-mode-sel-fg);\n}\n\n.hx-mode-badge.mode-cmd {\n  background: var(--hx-mode-cmd-bg);\n  color: var(--hx-mode-cmd-fg);\n}\n\n.hx-mode-badge.mode-src {\n  background: var(--hx-mode-src-bg);\n  color: var(--hx-mode-src-fg);\n}\n\n.hx-mode-badge.mode-hnt {\n  background: var(--hx-hint-bg);\n  color: var(--hx-hint-fg);\n}\n\n.hx-mode-badge.mode-spc {\n  background: var(--hx-accent);\n  color: var(--hx-surface);\n}\n\n.hx-mode-badge.mode-gto {\n  background: var(--hx-accent);\n  color: var(--hx-surface);\n}\n\n.hx-mode-badge.mode-pck,\n.hx-mode-badge.mode-picker {\n  background: var(--hx-accent);\n  color: var(--hx-surface);\n}\n\n.hx-status-message {\n  color: var(--hx-text);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  max-width: 450px;\n}\n\n.hx-status-keys {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  padding: 1px 6px;\n  border-radius: 3px;\n  border: 1px solid var(--hx-border);\n  font-family: inherit;\n  font-size: 10.5px;\n  min-width: 24px;\n  text-align: center;\n}\n\n.hx-status-scroll {\n  color: var(--hx-text-muted);\n  font-variant-numeric: tabular-nums;\n}\n\n.hx-status-title {\n  color: var(--hx-text-muted);\n  max-width: 300px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* ==================== WHICH-KEY POPUP ==================== */\n\n.hx-which-key {\n  position: fixed;\n  bottom: 40px;\n  right: 12px;\n  background: var(--hx-bg);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  box-shadow: var(--hx-shadow);\n  padding: 10px 14px;\n  color: var(--hx-text);\n  max-width: 420px;\n  min-width: 280px;\n  pointer-events: auto;\n  z-index: 10001;\n  animation: hx-fade-in 0.1s cubic-bezier(0.16, 1, 0.3, 1);\n  backdrop-filter: blur(12px);\n  -webkit-backdrop-filter: blur(12px);\n}\n\n.hx-which-key-title {\n  font-size: 11px;\n  font-weight: 700;\n  text-transform: uppercase;\n  letter-spacing: 0.8px;\n  color: var(--hx-accent);\n  margin-bottom: 8px;\n  padding-bottom: 4px;\n  border-bottom: 1px solid var(--hx-border);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.hx-which-key-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));\n  gap: 6px 12px;\n}\n\n.hx-which-key-item {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px;\n  cursor: pointer;\n  padding: 2px 4px;\n  border-radius: 4px;\n  transition: background-color 0.1s ease;\n}\n\n.hx-which-key-item:hover {\n  background: var(--hx-surface-elevated);\n}\n\n.hx-key-badge {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  font-weight: 700;\n  padding: 1px 5px;\n  border-radius: 3px;\n  border: 1px solid var(--hx-border);\n  min-width: 18px;\n  text-align: center;\n  font-size: 11px;\n}\n\n.hx-key-label {\n  color: var(--hx-text);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n/* ==================== LINK HINT OVERLAYS ==================== */\n\n.hx-hint-marker {\n  position: absolute;\n  z-index: 2147483640;\n  background-color: var(--hx-hint-bg);\n  color: var(--hx-hint-fg);\n  border: 1px solid var(--hx-hint-border);\n  font-family: inherit;\n  font-size: 11px;\n  font-weight: 800;\n  padding: 1px 4px;\n  border-radius: 3px;\n  line-height: 1.1;\n  text-transform: uppercase;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);\n  pointer-events: none;\n  opacity: 0.95;\n  transform: translateY(-2px);\n  animation: hx-pop-in 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);\n}\n\n.hx-hint-marker .matched {\n  color: #d20f39;\n  text-decoration: underline;\n  font-weight: 900;\n}\n\n/* ==================== COMMAND BAR & PROMPT ==================== */\n\n.hx-command-bar {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  background: var(--hx-bg);\n  border-top: 1px solid var(--hx-border);\n  box-shadow: var(--hx-shadow);\n  padding: 6px 12px;\n  display: flex;\n  flex-direction: column;\n  pointer-events: auto;\n  z-index: 10002;\n  animation: hx-slide-up 0.1s ease;\n}\n\n.hx-command-input-wrapper {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.hx-command-prompt-symbol {\n  color: var(--hx-mode-cmd-bg);\n  font-weight: 800;\n  font-size: 15px;\n}\n\n.hx-command-input {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--hx-text);\n  font-family: inherit;\n  font-size: 13px;\n  font-weight: 500;\n}\n\n.hx-command-completions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n  margin-top: 6px;\n  padding-top: 6px;\n  border-top: 1px solid var(--hx-border);\n  max-height: 120px;\n  overflow-y: auto;\n}\n\n.hx-command-completion-item {\n  padding: 2px 8px;\n  background: var(--hx-surface);\n  color: var(--hx-text-muted);\n  border-radius: 3px;\n  font-size: 11px;\n  cursor: pointer;\n  border: 1px solid transparent;\n}\n\n.hx-command-completion-item.active {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  border-color: var(--hx-accent);\n}\n\n/* ==================== SEARCH BAR ==================== */\n\n.hx-search-bar {\n  position: fixed;\n  bottom: 8px;\n  left: 12px;\n  background: var(--hx-bg);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  box-shadow: var(--hx-shadow);\n  padding: 6px 12px;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 320px;\n  max-width: 480px;\n  pointer-events: auto;\n  z-index: 10002;\n  animation: hx-fade-in 0.1s ease;\n}\n\n.hx-search-icon {\n  color: var(--hx-mode-src-bg);\n  font-weight: 800;\n}\n\n.hx-search-input {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--hx-text);\n  font-family: inherit;\n  font-size: 13px;\n}\n\n.hx-search-count {\n  font-size: 11px;\n  color: var(--hx-text-muted);\n  font-variant-numeric: tabular-nums;\n}\n\n/* ==================== TAB / BUFFER PICKER ==================== */\n\n.hx-tab-picker-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.5);\n  display: flex;\n  justify-content: center;\n  align-items: flex-start;\n  padding-top: 10vh;\n  pointer-events: auto;\n  z-index: 10005;\n  backdrop-filter: blur(4px);\n  -webkit-backdrop-filter: blur(4px);\n}\n\n.hx-tab-picker-modal {\n  width: 580px;\n  max-width: 90vw;\n  background: var(--hx-bg);\n  border: 1px solid var(--hx-border);\n  border-radius: 8px;\n  box-shadow: var(--hx-shadow);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  animation: hx-scale-up 0.12s cubic-bezier(0.16, 1, 0.3, 1);\n}\n\n.hx-tab-picker-header {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 10px 14px;\n  border-bottom: 1px solid var(--hx-border);\n  background: var(--hx-surface);\n}\n\n.hx-tab-picker-search {\n  flex: 1;\n  background: transparent;\n  border: none;\n  outline: none;\n  color: var(--hx-text);\n  font-family: inherit;\n  font-size: 14px;\n}\n\n.hx-tab-picker-list {\n  max-height: 380px;\n  overflow-y: auto;\n  padding: 6px;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.hx-tab-item {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 6px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: background 0.1s ease;\n}\n\n.hx-tab-item:hover,\n.hx-tab-item.selected {\n  background: var(--hx-surface-elevated);\n}\n\n.hx-tab-item.selected {\n  border-left: 3px solid var(--hx-accent);\n}\n\n.hx-tab-favicon {\n  width: 16px;\n  height: 16px;\n  border-radius: 2px;\n  flex-shrink: 0;\n}\n\n.hx-tab-info {\n  flex: 1;\n  overflow: hidden;\n  display: flex;\n  flex-direction: column;\n}\n\n.hx-tab-title {\n  color: var(--hx-text);\n  font-size: 12.5px;\n  font-weight: 500;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.hx-tab-url {\n  color: var(--hx-text-muted);\n  font-size: 10.5px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.hx-tab-index {\n  color: var(--hx-accent);\n  font-size: 11px;\n  font-weight: 700;\n  min-width: 20px;\n  text-align: right;\n}\n\n/* ==================== SYMBOL / HEADING BADGES ==================== */\n\n.hx-heading-badge {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 10px;\n  font-weight: 700;\n  font-family: inherit;\n  padding: 1px 5px;\n  border-radius: 3px;\n  min-width: 24px;\n  height: 18px;\n  flex-shrink: 0;\n  letter-spacing: 0.5px;\n}\n\n.hx-level-1 {\n  background: rgba(203, 166, 247, 0.2);\n  color: #cba6f7;\n  border: 1px solid rgba(203, 166, 247, 0.4);\n}\n\n.hx-level-2 {\n  background: rgba(137, 180, 250, 0.2);\n  color: #89b4fa;\n  border: 1px solid rgba(137, 180, 250, 0.4);\n}\n\n.hx-level-3 {\n  background: rgba(166, 227, 161, 0.2);\n  color: #a6e3a1;\n  border: 1px solid rgba(166, 227, 161, 0.4);\n}\n\n.hx-level-4 {\n  background: rgba(249, 226, 175, 0.2);\n  color: #f9e2af;\n  border: 1px solid rgba(249, 226, 175, 0.4);\n}\n\n.hx-level-5 {\n  background: rgba(250, 179, 135, 0.2);\n  color: #fab387;\n  border: 1px solid rgba(250, 179, 135, 0.4);\n}\n\n.hx-level-6 {\n  background: rgba(148, 226, 213, 0.2);\n  color: #94e2d5;\n  border: 1px solid rgba(148, 226, 213, 0.4);\n}\n\n.hx-symbol-item {\n  position: relative;\n}\n\n.hx-symbol-item .hx-tab-title {\n  font-size: 12.5px;\n  font-weight: 500;\n}\n\n/* ==================== CARET / VISUAL SELECTION ==================== */\n\n.hx-visual-caret {\n  position: absolute;\n  width: 2px;\n  background-color: var(--hx-accent);\n  box-shadow: 0 0 6px var(--hx-accent);\n  pointer-events: none;\n  z-index: 2147483630;\n  animation: hx-blink 1s ease-in-out infinite;\n}\n\n/* ==================== ZEN / READER MODE ==================== */\n\n.hx-reader-overlay {\n  position: fixed;\n  inset: 0;\n  background: var(--hx-bg);\n  color: var(--hx-text);\n  overflow-y: auto;\n  padding: 40px 20px 80px 20px;\n  pointer-events: auto;\n  z-index: 2147483642;\n  display: flex;\n  justify-content: center;\n  animation: hx-fade-in 0.15s ease;\n}\n\n.hx-reader-container {\n  width: 760px;\n  max-width: 100%;\n  display: flex;\n  flex-direction: column;\n  gap: 20px;\n}\n\n.hx-reader-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid var(--hx-border);\n  padding-bottom: 12px;\n}\n\n.hx-reader-tag {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-accent);\n  font-weight: 700;\n  font-size: 11px;\n  letter-spacing: 1px;\n  padding: 3px 8px;\n  border-radius: 3px;\n  border: 1px solid var(--hx-border);\n}\n\n.hx-reader-close-btn {\n  background: var(--hx-surface);\n  color: var(--hx-text-muted);\n  border: 1px solid var(--hx-border);\n  padding: 4px 10px;\n  border-radius: 4px;\n  cursor: pointer;\n  font-family: inherit;\n  font-size: 12px;\n  transition: all 0.1s ease;\n}\n\n.hx-reader-close-btn:hover {\n  background: var(--hx-surface-elevated);\n  color: var(--hx-text);\n}\n\n.hx-reader-title {\n  font-size: 26px;\n  font-weight: 800;\n  line-height: 1.3;\n  color: var(--hx-text);\n  margin-top: 10px;\n}\n\n.hx-reader-content {\n  font-size: 15px;\n  line-height: 1.7;\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n  color: var(--hx-text);\n}\n\n.hx-reader-content h2 {\n  font-size: 20px;\n  font-weight: 700;\n  color: var(--hx-accent);\n  margin-top: 20px;\n  border-bottom: 1px solid var(--hx-border);\n  padding-bottom: 6px;\n}\n\n.hx-reader-content h3 {\n  font-size: 17px;\n  font-weight: 600;\n  color: var(--hx-text);\n  margin-top: 14px;\n}\n\n.hx-reader-content p {\n  color: var(--hx-text);\n}\n\n.hx-reader-content blockquote {\n  border-left: 3px solid var(--hx-accent);\n  padding-left: 14px;\n  color: var(--hx-text-muted);\n  font-style: italic;\n}\n\n.hx-reader-content li {\n  margin-left: 20px;\n}\n\n.hx-reader-code {\n  background: var(--hx-surface);\n  border: 1px solid var(--hx-border);\n  border-radius: 6px;\n  padding: 12px 14px;\n  overflow-x: auto;\n  font-family: inherit;\n  font-size: 13px;\n  line-height: 1.5;\n  color: var(--hx-text);\n}\n\n/* ==================== ANIMATIONS ==================== */\n\n@keyframes hx-fade-in {\n  from {\n    opacity: 0;\n    transform: translateY(4px);\n  }\n\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes hx-pop-in {\n  from {\n    opacity: 0;\n    transform: scale(0.85);\n  }\n\n  to {\n    opacity: 1;\n    transform: scale(1);\n  }\n}\n\n@keyframes hx-slide-up {\n  from {\n    transform: translateY(100%);\n  }\n\n  to {\n    transform: translateY(0);\n  }\n}\n\n@keyframes hx-scale-up {\n  from {\n    opacity: 0;\n    transform: scale(0.96) translateY(-8px);\n  }\n\n  to {\n    opacity: 1;\n    transform: scale(1) translateY(0);\n  }\n}\n\n@keyframes hx-blink {\n\n  0%,\n  100% {\n    opacity: 1;\n  }\n\n  50% {\n    opacity: 0.3;\n  }\n}";
 
 
 /* ========== FILE: src/content/navigation/jump-list.js ========== */
@@ -956,17 +956,19 @@ const MENUS = {
       { key: 'b', label: 'Buffer / Tab picker' },
       { key: 'f', label: 'Search bookmarks' },
       { key: 'h', label: 'Search history' },
+      { key: 's', label: 'Symbol / Outline picker' },
+      { key: 'o', label: 'Outline / Symbol picker' },
       { key: 'z', label: 'Zen / Reader mode' },
       { key: 'y', label: 'Yank URL' },
       { key: 't', label: 'Yank title' },
       { key: 'w', label: 'Close tab' },
       { key: 'p', label: 'Toggle pin tab' },
       { key: 'm', label: 'Toggle mute tab' },
-      { key: 's', label: 'Split window' },
+      { key: 'v', label: 'Split window' },
       { key: 'u', label: 'Restore closed tab' },
       { key: 'n', label: 'New tab' },
       { key: 'd', label: 'Duplicate tab' },
-      { key: 'o', label: 'Options / Settings' }
+      { key: 'c', label: 'Options / Settings' }
     ]
   },
   goto: {
@@ -1609,6 +1611,8 @@ const AVAILABLE_COMMANDS = [
   { name: 'theme', desc: 'Change UI color theme', usage: ':theme <name>' },
   { name: 'settings', desc: 'Open Helix extension options', usage: ':settings' },
   { name: 'options', desc: 'Alias for settings', usage: ':options' },
+  { name: 'symbols', desc: 'Open document heading / symbol outline picker', usage: ':symbols' },
+  { name: 'outline', desc: 'Alias for symbols outline picker', usage: ':outline' },
   { name: 'duplicate', desc: 'Duplicate current tab', usage: ':duplicate' },
   { name: 'help', desc: 'Show keybindings and command help', usage: ':help' }
 ];
@@ -1931,6 +1935,15 @@ class CommandBar {
         break;
       }
 
+      case 'symbols':
+      case 'symbol':
+      case 'outline': {
+        if (typeof stateManager !== 'undefined' && typeof MODES !== 'undefined') {
+          stateManager.setMode(MODES.PICKER, { pickerType: 'symbols' });
+        }
+        break;
+      }
+
       case 'help': {
         statusLine.setMessage('Press Space for Menu, g for Goto (gw hints), [ or ] for Jumps, / to Search', 6000);
         break;
@@ -1957,8 +1970,10 @@ const commandBar = new CommandBar();
 
 /* ========== FILE: src/content/ui/tab-picker.js ========== */
 /**
- * Helix Buffer / Tab / Bookmark / History Fuzzy Picker (<Space>b, <Space>f, <Space>h)
+ * Helix Buffer / Tab / Bookmark / History / Symbol Fuzzy Picker (<Space>b, <Space>f, <Space>h, <Space>s, <Space>o)
  */
+
+
 
 
 
@@ -1971,7 +1986,7 @@ class TabPicker {
     this.items = [];
     this.filtered = [];
     this.selectedIndex = 0;
-    this.mode = 'tabs'; // 'tabs' | 'bookmarks' | 'history'
+    this.mode = 'tabs'; // 'tabs' | 'bookmarks' | 'history' | 'symbols'
     this.onClose = null;
   }
 
@@ -1986,12 +2001,23 @@ class TabPicker {
     this.element = document.createElement('div');
     this.element.className = 'hx-tab-picker-overlay';
 
-    const titlePlaceholder = mode === 'tabs' ? 'Switch buffer / tab...' : (mode === 'bookmarks' ? 'Search bookmarks...' : 'Search history...');
+    let icon = '󰕘';
+    let titlePlaceholder = 'Switch buffer / tab...';
+    if (mode === 'bookmarks') {
+      icon = '★';
+      titlePlaceholder = 'Search bookmarks...';
+    } else if (mode === 'history') {
+      icon = '󰋚';
+      titlePlaceholder = 'Search history...';
+    } else if (mode === 'symbols') {
+      icon = '§';
+      titlePlaceholder = 'Jump to heading / symbol...';
+    }
 
     this.element.innerHTML = `
       <div class="hx-tab-picker-modal">
         <div class="hx-tab-picker-header">
-          <span style="color: var(--hx-accent); font-weight: 700;">󰕘</span>
+          <span style="color: var(--hx-accent); font-weight: 700; font-family: monospace, sans-serif; font-size: 15px;">${icon}</span>
           <input type="text" class="hx-tab-picker-search" placeholder="${titlePlaceholder}" spellcheck="false" />
         </div>
         <div class="hx-tab-picker-list"></div>
@@ -2050,6 +2076,52 @@ class TabPicker {
         favIconUrl: '',
         index: idx + 1
       }));
+    } else if (this.mode === 'symbols') {
+      const headingEls = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]'));
+      const visibleHeadings = headingEls.filter(el => {
+        if (el.closest('#helix-chrome-root')) return false;
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.visibility !== 'hidden' &&
+          style.display !== 'none' &&
+          style.opacity !== '0'
+        );
+      });
+
+      // Sort by vertical position on page
+      visibleHeadings.sort((a, b) => {
+        const topA = a.getBoundingClientRect().top + window.scrollY;
+        const topB = b.getBoundingClientRect().top + window.scrollY;
+        if (Math.abs(topA - topB) > 2) return topA - topB;
+        return a.getBoundingClientRect().left - b.getBoundingClientRect().left;
+      });
+
+      const docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 1);
+
+      this.items = visibleHeadings.map((el, idx) => {
+        const tag = el.tagName.toLowerCase();
+        let level = 2;
+        if (/^h[1-6]$/.test(tag)) {
+          level = parseInt(tag[1], 10);
+        } else if (el.hasAttribute('aria-level')) {
+          level = parseInt(el.getAttribute('aria-level'), 10) || 2;
+        }
+        const text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        const pct = Math.min(100, Math.max(0, Math.round((top / docHeight) * 100)));
+
+        return {
+          id: `heading-${idx}`,
+          element: el,
+          level,
+          title: text || `Heading ${level}`,
+          percent: pct,
+          index: idx + 1
+        };
+      }).filter(item => item.title && item.title.trim().length > 0);
     }
 
     this.filterItems();
@@ -2060,8 +2132,14 @@ class TabPicker {
     if (!query) {
       this.filtered = [...this.items];
     } else {
+      const tokens = query.split(/\s+/).filter(Boolean);
       this.filtered = this.items.filter(item => {
-        return item.title.toLowerCase().includes(query) || item.url.toLowerCase().includes(query);
+        const searchTarget = [
+          item.title,
+          item.url || '',
+          item.level ? `h${item.level}` : ''
+        ].join(' ').toLowerCase();
+        return tokens.every(token => searchTarget.includes(token));
       });
     }
 
@@ -2071,12 +2149,29 @@ class TabPicker {
 
   renderList() {
     if (this.filtered.length === 0) {
-      this.listEl.innerHTML = `<div style="padding: 12px; color: var(--hx-text-muted); text-align: center;">No matching items</div>`;
+      const msg = (this.mode === 'symbols' && this.items.length === 0)
+        ? 'No headings found on this page'
+        : 'No matching items';
+      this.listEl.innerHTML = `<div style="padding: 16px; color: var(--hx-text-muted); text-align: center; font-size: 13px;">${msg}</div>`;
       return;
     }
 
     this.listEl.innerHTML = this.filtered.map((item, idx) => {
       const isSelected = idx === this.selectedIndex;
+
+      if (this.mode === 'symbols') {
+        const indent = Math.max(0, (item.level - 1) * 14);
+        return `
+          <div class="hx-tab-item hx-symbol-item ${isSelected ? 'selected' : ''}" data-idx="${idx}">
+            <span class="hx-heading-badge hx-level-${item.level}">H${item.level}</span>
+            <div class="hx-tab-info" style="padding-left: ${indent}px;">
+              <span class="hx-tab-title">${this.escapeHtml(item.title)}</span>
+            </div>
+            <span class="hx-tab-index">${item.percent !== undefined ? `${item.percent}%` : item.index}</span>
+          </div>
+        `;
+      }
+
       const favicon = item.favIconUrl
         ? `<img class="hx-tab-favicon" src="${item.favIconUrl}" alt="" onerror="this.style.display='none'" />`
         : `<span style="font-size: 14px; width: 16px; text-align:center;">📄</span>`;
@@ -2139,6 +2234,22 @@ class TabPicker {
     const item = this.filtered[idx];
     if (!item) return;
 
+    if (this.mode === 'symbols') {
+      if (item.element) {
+        if (typeof jumpList !== 'undefined' && jumpList.recordPosition) {
+          jumpList.recordPosition();
+        }
+        item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (typeof Traversal !== 'undefined' && Traversal.flashHighlight) {
+          Traversal.flashHighlight(item.element);
+        } else {
+          this.flashHeading(item.element);
+        }
+      }
+      this.close();
+      return;
+    }
+
     if (this.mode === 'tabs') {
       await chrome.runtime.sendMessage({
         type: 'SWITCH_TAB',
@@ -2151,6 +2262,17 @@ class TabPicker {
     }
 
     this.close();
+  }
+
+  flashHeading(element) {
+    const originalOutline = element.style.outline;
+    const originalTransition = element.style.transition;
+    element.style.transition = 'outline 0.15s ease';
+    element.style.outline = '3px solid #b4befe';
+    setTimeout(() => {
+      element.style.outline = originalOutline;
+      element.style.transition = originalTransition;
+    }, 600);
   }
 
   escapeHtml(str) {
@@ -2900,6 +3022,11 @@ class KeyDispatcher {
       case 'h':
         stateManager.setMode(MODES.PICKER, { pickerType: 'history' });
         break;
+      case 's':
+      case 'S':
+      case 'o':
+        stateManager.setMode(MODES.PICKER, { pickerType: 'symbols' });
+        break;
       case 'z':
         stateManager.setMode(MODES.NORMAL);
         readerMode.toggle();
@@ -2916,7 +3043,7 @@ class KeyDispatcher {
           statusLine.setMessage(res?.muted ? 'Tab muted' : 'Tab unmuted');
         });
         break;
-      case 's':
+      case 'v':
         stateManager.setMode(MODES.NORMAL);
         chrome.runtime.sendMessage({ type: 'SPLIT_WINDOW' });
         statusLine.setMessage('Tiled window split');
@@ -2947,7 +3074,7 @@ class KeyDispatcher {
         stateManager.setMode(MODES.NORMAL);
         chrome.runtime.sendMessage({ type: 'DUPLICATE_TAB' });
         break;
-      case 'o':
+      case 'c':
         stateManager.setMode(MODES.NORMAL);
         chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' });
         break;

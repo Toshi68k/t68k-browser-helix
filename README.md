@@ -82,10 +82,11 @@
 | `<Space> b` | Open Fuzzy Tab / Buffer Switcher |
 | `<Space> f` | Search bookmarks |
 | `<Space> h` | Search history |
+| `<Space> s` / `<Space> o` | Document Symbol / Heading Outline Picker |
 | `<Space> z` | Toggle Zen / Reader Mode |
 | `<Space> p` | Toggle Tab Pin |
 | `<Space> m` | Toggle Tab Mute |
-| `<Space> s` | Split window into side-by-side tile |
+| `<Space> v` | Split window into side-by-side tile |
 | `g g` / `g e` | Jump to top / bottom of page (`goto_file_start` / `goto_last_line`) |
 | `g t` / `g c` / `g b` | Jump to window top / center / bottom (`goto_window_top/center/bottom`) |
 | `g h` / `g l` | Scroll to line start / end (`goto_line_start` / `goto_line_end`) |
@@ -141,6 +142,7 @@
 - `:pin` - Toggle tab pin state
 - `:mute` - Toggle tab audio muting
 - `:split` (or `:vsplit`) - Tile browser window side-by-side
+- `:symbols` (or `:outline`) - Open document symbol / heading outline picker
 - `:zen` (or `:reader`) - Toggle distraction-free Zen Reader mode
 - `:curl` - Yank `curl` command for current URL
 - `:markdown` (or `:md`) - Yank selection or page as clean Markdown
