@@ -12,17 +12,19 @@ export const MENUS = {
       { key: 'b', label: 'Buffer / Tab picker' },
       { key: 'f', label: 'Search bookmarks' },
       { key: 'h', label: 'Search history' },
+      { key: 's', label: 'Symbol / Outline picker' },
+      { key: 'o', label: 'Outline / Symbol picker' },
       { key: 'z', label: 'Zen / Reader mode' },
       { key: 'y', label: 'Yank URL' },
       { key: 't', label: 'Yank title' },
       { key: 'w', label: 'Close tab' },
       { key: 'p', label: 'Toggle pin tab' },
       { key: 'm', label: 'Toggle mute tab' },
-      { key: 's', label: 'Split window' },
+      { key: 'v', label: 'Split window' },
       { key: 'u', label: 'Restore closed tab' },
       { key: 'n', label: 'New tab' },
       { key: 'd', label: 'Duplicate tab' },
-      { key: 'o', label: 'Options / Settings' }
+      { key: 'c', label: 'Options / Settings' }
     ]
   },
   goto: {

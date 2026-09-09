@@ -483,6 +483,11 @@ export class KeyDispatcher {
       case 'h':
         stateManager.setMode(MODES.PICKER, { pickerType: 'history' });
         break;
+      case 's':
+      case 'S':
+      case 'o':
+        stateManager.setMode(MODES.PICKER, { pickerType: 'symbols' });
+        break;
       case 'z':
         stateManager.setMode(MODES.NORMAL);
         readerMode.toggle();
@@ -499,7 +504,7 @@ export class KeyDispatcher {
           statusLine.setMessage(res?.muted ? 'Tab muted' : 'Tab unmuted');
         });
         break;
-      case 's':
+      case 'v':
         stateManager.setMode(MODES.NORMAL);
         chrome.runtime.sendMessage({ type: 'SPLIT_WINDOW' });
         statusLine.setMessage('Tiled window split');
@@ -530,7 +535,7 @@ export class KeyDispatcher {
         stateManager.setMode(MODES.NORMAL);
         chrome.runtime.sendMessage({ type: 'DUPLICATE_TAB' });
         break;
-      case 'o':
+      case 'c':
         stateManager.setMode(MODES.NORMAL);
         chrome.runtime.sendMessage({ type: 'OPEN_OPTIONS' });
         break;
